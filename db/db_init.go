@@ -1,6 +1,7 @@
 package db
 
 import (
+	"code-generator/init"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -9,11 +10,10 @@ import (
 var DB *gorm.DB
 
 func init() {
-	//db, err := gorm.Open("mysql", "root:zywl2018@tcp(192.168.1.82:3306)/basecloud?charset=utf8&parseTime=True&loc=Local")
-	db, err := gorm.Open("mysql", "root@tcp(127.0.0.1:3306)/basecloud?charset=utf8&parseTime=True&loc=Local")
+	db, err := gorm.Open(init.Config.Db.Dialect, init.Config.Db.Url)
 	if nil != err {
 		fmt.Println(err)
-		panic("数据库连接异常")
+		panic("Database Connect Error")
 	}
 	//设置最大空闲连接
 	db.DB().SetMaxIdleConns(10)
