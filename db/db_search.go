@@ -1,14 +1,25 @@
 package db
 
-import "strings"
+import (
+	"strings"
+	"time"
+)
 
 type Table struct {
 	TableName    string `json:"tableName"`
 	ModuleName   string
 	FileName     string
-	Engine       string `json:"engine"`
-	TableComment string `json:"tableComment"`
-	CreateTime   string `json:"createTime"`
+	Engine       string   `json:"engine"`
+	TableComment string   `json:"tableComment"`
+	CreateTime   UnixTime `json:"createTime"`
+}
+
+type UnixTime time.Time
+
+func (t UnixTime) MarshalJSON() ([]byte, error) {
+	format := time.Time(t).Format("2006/1/2 15:04:05")
+	format = "\"" + format + "\""
+	return []byte(format), nil
 }
 
 func (table *Table) Parse() {

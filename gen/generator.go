@@ -41,10 +41,17 @@ func Gen(config *Config, w http.ResponseWriter) {
 	for _, module := range config.Modules {
 		columns := db.QueryColumns(module.TableName)
 		table := db.QueryTable(module.TableName)
+		addColumns := filterColumns(columns, &module.AddFields)
+		searchColumns := filterColumns(columns, &module.SearchFields)
+		listColumns := (*columns)[0:]
+		appendColumn(&listColumns, &module.JoinTables)
 		data := map[string]interface{}{
-			"columns":   columns,
-			"table":     table,
-			"addFields": module.AddFields,
+			"columns":       columns,
+			"table":         table,
+			"addFields":     module.AddFields,
+			"addColumns":    addColumns,
+			"searchColumns": searchColumns,
+			"listColumns":   listColumns,
 		}
 		for _, tpl := range tpls {
 			template, _ := pongo2.FromFile("./tpl/" + tpl.Name + ".tpl")
@@ -56,6 +63,31 @@ func Gen(config *Config, w http.ResponseWriter) {
 	defer func() {
 		zipW.Close()
 	}()
+}
+
+func appendColumn(columns *[]*db.Column, joinTables *[]JoinTable) {
+	for _, table := range *joinTables {
+		realColumns := db.QueryColumns(table.TableName)
+		var currentColumn db.Column
+		for _, column := range *realColumns {
+			if column.ColumnName == table.JoinColumn {
+				currentColumn = *column
+			}
+		}
+		*columns = append(*columns, &db.Column{ColumnName: table.TableName, FieldName: table.Alias, ColumnComment: table.Description, Extra: currentColumn.Extra, DataType: currentColumn.DataType})
+	}
+}
+
+func filterColumns(columns *[]*db.Column, addFields *[]string) *[]*db.Column {
+	newColumn := make([]*db.Column, 0)
+	for _, column := range *columns {
+		for _, field := range *addFields {
+			if field == column.ColumnName {
+				newColumn = append(newColumn, column)
+			}
+		}
+	}
+	return &newColumn
 }
 
 func getPath(root, moduleName, pageName, fileName string, needPageModule bool) string {

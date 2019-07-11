@@ -52,7 +52,8 @@ func listHandle(w http.ResponseWriter, r *http.Request) {
 	limit, _ := strconv.Atoi(request.Limit)
 	tables, count := db.QueryList(request.TableName, page, limit)
 	response := ListResponse{tables, count}
-	json, _ := json.Marshal(&response)
+	json, e := json.Marshal(&response)
+	fmt.Println(e)
 	w.Write(json)
 }
 
