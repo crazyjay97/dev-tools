@@ -3,6 +3,7 @@ package gen
 import (
 	"archive/zip"
 	"code-generator/db"
+	"code-generator/load"
 	"github.com/flosch/pongo2"
 	"net/http"
 	"strings"
@@ -35,27 +36,36 @@ type JoinTable struct {
 }
 
 func Gen(config *Config, w http.ResponseWriter) {
-	template, _ := pongo2.FromFile("./tpl/index.tpl")
 	zipW := zip.NewWriter(w)
+	tpls := load.Config.Tpl
 	for _, module := range config.Modules {
 		columns := db.QueryColumns(module.TableName)
 		table := db.QueryTable(module.TableName)
-		rs, _ := template.Execute(map[string]interface{}{
-			"columns": columns,
-			"table":   table,
-		})
-		fW, _ := zipW.Create(getPath(table.ModuleName, table.FileName, "index.vue"))
-		fW.Write([]byte(rs))
+		data := map[string]interface{}{
+			"columns":   columns,
+			"table":     table,
+			"addFields": module.AddFields,
+		}
+		for _, tpl := range tpls {
+			template, _ := pongo2.FromFile("./tpl/" + tpl.Name + ".tpl")
+			rs, _ := template.Execute(data)
+			fW, _ := zipW.Create(getPath(tpl.Root, table.ModuleName, table.FileName, tpl.FileName, tpl.NeedModule))
+			fW.Write([]byte(rs))
+		}
 	}
 	defer func() {
 		zipW.Close()
 	}()
 }
 
-func getPath(moduleName, pageName, fileName string) string {
+func getPath(root, moduleName, pageName, fileName string, needPageModule bool) string {
 	mainPath := "code"
+	if !needPageModule {
+		fileName = ""
+	}
 	return strings.Join([]string{
 		mainPath,
+		root,
 		moduleName,
 		pageName,
 		fileName,

@@ -9,13 +9,13 @@
                         <h5>{{"{"}}{ $t("common.tip") }{{"}"}}<span>*</span>{{"{"}}{ $t("common.tippp") }{{"}"}}</h5>
                     </div>
                     <div class="i-box-conn">
-                        <el-row>
+                        <el-row>{% for column in columns %} {% for field in addFields %} {% if field == column.ColumnName %}
                             <el-col :span="24">
-                                <el-form-item prop="roleName" :label="$t('role.column.roleName')">
-                                    <el-input v-model="formData.roleName" :placeholder="$t('role.column.roleName')"
+                                <el-form-item prop="{{ column.FieldName }}" label="{{ column.ColumnComment }}">
+                                    <el-input v-model="formData.{{ column.FieldName }}" placeholder="{{ column.ColumnComment }}"
                                               clearable></el-input>
                                 </el-form-item>
-                            </el-col>
+                            </el-col>{% endif %} {% endfor %} {% endfor %}
                         </el-row>
                     </div>
                 </div>

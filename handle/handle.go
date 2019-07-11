@@ -3,7 +3,7 @@ package handle
 import (
 	"code-generator/db"
 	"code-generator/gen"
-	"code-generator/init"
+	"code-generator/load"
 	"encoding/json"
 	"github.com/goinggo/mapstructure"
 	"net/http"
@@ -14,8 +14,8 @@ import (
 
 func init() {
 	var port int
-	if 0 != init.Config.Port {
-		port = init.Config.Port
+	if 0 != load.Config.Port {
+		port = load.Config.Port
 	} else {
 		port = 8888
 	}
@@ -23,7 +23,7 @@ func init() {
 	http.HandleFunc("/generator/query/all", queryAllHandle)
 	http.HandleFunc("/generator/query/columns", queryColumnsHandle)
 	http.HandleFunc("/generator/gen", genHandle)
-	http.ListenAndServe("127.0.0.1:"+string(port), nil)
+	http.ListenAndServe("127.0.0.1:"+strconv.Itoa(port), nil)
 
 }
 

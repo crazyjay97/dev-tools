@@ -1,7 +1,7 @@
 package db
 
 import (
-	"code-generator/init"
+	"code-generator/load"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -10,7 +10,7 @@ import (
 var DB *gorm.DB
 
 func init() {
-	db, err := gorm.Open(init.Config.Db.Dialect, init.Config.Db.Url)
+	db, err := gorm.Open(load.Config.Db.Dialect, load.Config.Db.Url)
 	if nil != err {
 		fmt.Println(err)
 		panic("Database Connect Error")
