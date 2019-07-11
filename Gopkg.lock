@@ -2,6 +2,30 @@
 
 
 [[projects]]
+  branch = "master"
+  digest = "1:2121d6a24377175707e73bb3d4f78d4511b87abfe93a02824eb1390b5bc2a293"
+  name = "github.com/Unknwon/goconfig"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "3dba17dd7b9ec8509b3621a73a30a4b333eb28da"
+
+[[projects]]
+  branch = "master"
+  digest = "1:d527344aab3b30bf460300762dc36813acb86f58a5403efb2bda5a459497450f"
+  name = "github.com/c4pt0r/ini"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "47e5250791e5019a296626fc03064cf2b4e39f65"
+
+[[projects]]
+  digest = "1:434aab943cc1c082c9df36bd4b1f107d9ef4af930d2ce13d3f2eb008df9196f0"
+  name = "github.com/flosch/pongo2"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "5e81b817a0c48c1c57cdf1a9056cf76bdee02ca9"
+  version = "v3.0"
+
+[[projects]]
   digest = "1:850c49ca338a10fec2cb9e78f793043ed23965489d09e30bcc19fe29719da313"
   name = "github.com/go-sql-driver/mysql"
   packages = ["."]
@@ -40,6 +64,9 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/Unknwon/goconfig",
+    "github.com/c4pt0r/ini",
+    "github.com/flosch/pongo2",
     "github.com/goinggo/mapstructure",
     "github.com/jinzhu/gorm",
     "github.com/jinzhu/gorm/dialects/mysql",

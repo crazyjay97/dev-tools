@@ -23,8 +23,8 @@ func init() {
 	http.HandleFunc("/generator/query/all", queryAllHandle)
 	http.HandleFunc("/generator/query/columns", queryColumnsHandle)
 	http.HandleFunc("/generator/gen", genHandle)
+	InitHttpProxy()
 	http.ListenAndServe("127.0.0.1:"+strconv.Itoa(port), nil)
-
 }
 
 type ListRequest struct {
