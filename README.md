@@ -1,4 +1,4 @@
-#### Supported databases
+#### Supported Databases
 * mysql
 
 #### Required File And Folder
