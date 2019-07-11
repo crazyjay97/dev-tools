@@ -13,8 +13,11 @@ type JsonConfig struct {
 	Tpl  []*Tpl
 }
 type Db struct {
-	Dialect string
-	Url     string
+	Dialect     string
+	Url         string
+	MaxIdleCons int
+	MaxOpenCon  int
+	PrintLog    bool
 }
 type Tpl struct {
 	Name       string

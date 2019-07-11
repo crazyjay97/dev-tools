@@ -15,11 +15,12 @@ func init() {
 		fmt.Println(err)
 		panic("Database Connect Error")
 	}
-	//设置最大空闲连接
-	db.DB().SetMaxIdleConns(10)
-	//设置最大打开连接
-	db.DB().SetMaxOpenConns(100)
-	//log
-	db.LogMode(true)
+	if 0 < load.Config.Db.MaxIdleCons {
+		db.DB().SetMaxIdleConns(load.Config.Db.MaxIdleCons)
+	}
+	if 0 < load.Config.Db.MaxOpenCon {
+		db.DB().SetMaxOpenConns(load.Config.Db.MaxOpenCon)
+	}
+	db.LogMode(load.Config.Db.PrintLog)
 	DB = db
 }
