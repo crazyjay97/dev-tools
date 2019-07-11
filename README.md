@@ -1,6 +1,11 @@
 #### Supported databases
 * mysql
 
+#### Required File And Folder
+* mime.ini
+* config.json
+* dist
+* tpl
 
 #### Install Dependence
 
