@@ -1,18 +1,46 @@
 package db
 
+import "strings"
+
 type Table struct {
 	TableName    string `json:"tableName"`
+	ModuleName   string
+	FileName     string
 	Engine       string `json:"engine"`
 	TableComment string `json:"tableComment"`
 	CreateTime   string `json:"createTime"`
 }
 
+func (table *Table) Parse() {
+	table.TableName = strings.ToLower(table.TableName)
+	splits := strings.Split(table.TableName, "_")
+	table.ModuleName = splits[0]
+	splits = splits[1:]
+	for i, str := range splits {
+		if i != 0 {
+			splits[i] = strings.ToUpper(string(str[0])) + string(str[1:])
+		}
+	}
+	table.FileName = strings.Join(splits, "")
+}
+
 type Column struct {
 	ColumnName    string `json:"columnName"`
+	FieldName     string
 	DataType      string `json:"dataType"`
 	ColumnComment string `json:"columnComment"`
 	ColumnKey     string `json:"columnKey"`
 	Extra         string `json:"extra"`
+}
+
+func (column *Column) Parse() {
+	splits := strings.Split(strings.ToLower(column.ColumnName), "_")
+	column.FieldName = splits[0]
+	splits = splits[1:]
+	for i, str := range splits {
+		splits[i] = strings.ToUpper(string(str[0])) + string(str[1:])
+	}
+	column.FieldName += strings.Join(splits, "")
 }
 
 type page struct {
@@ -41,6 +69,7 @@ func QueryTable(tableName string) *Table {
 		Select("table_name tableName, engine, table_comment tableComment, create_time createTime").
 		Where("table_schema = (select database()) and table_name = ?", tableName).
 		Row().Scan(&table.TableName, &table.Engine, &table.TableComment, &table.CreateTime)
+	table.Parse()
 	return table
 }
 
@@ -53,6 +82,7 @@ func QueryColumns(tableName string) *[]*Column {
 		for rows.Next() {
 			column := new(Column)
 			rows.Scan(&column.ColumnName, &column.DataType, &column.ColumnComment, &column.ColumnKey, &column.Extra)
+			column.Parse()
 			columns = append(columns, column)
 		}
 	} else {

@@ -9,7 +9,8 @@ import (
 var DB *gorm.DB
 
 func init() {
-	db, err := gorm.Open("mysql", "root:zywl2018@tcp(192.168.1.82:3306)/basecloud?charset=utf8&parseTime=True&loc=Local")
+	//db, err := gorm.Open("mysql", "root:zywl2018@tcp(192.168.1.82:3306)/basecloud?charset=utf8&parseTime=True&loc=Local")
+	db, err := gorm.Open("mysql", "root@tcp(127.0.0.1:3306)/basecloud?charset=utf8&parseTime=True&loc=Local")
 	if nil != err {
 		fmt.Println(err)
 		panic("数据库连接异常")

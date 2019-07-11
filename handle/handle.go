@@ -4,7 +4,6 @@ import (
 	"code-generator/db"
 	"code-generator/gen"
 	"encoding/json"
-	"fmt"
 	"github.com/goinggo/mapstructure"
 	"net/http"
 	"net/url"
@@ -61,9 +60,9 @@ func queryColumnsHandle(w http.ResponseWriter, r *http.Request) {
 
 func genHandle(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
-	var data gen.Config
-	decoder.Decode(&data)
-	fmt.Println(data.Modules)
+	var config gen.Config
+	decoder.Decode(&config)
+	gen.Gen(&config, w)
 }
 
 func form2Map(form *url.Values) *map[string]string {

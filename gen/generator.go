@@ -1,5 +1,13 @@
 package gen
 
+import (
+	"archive/zip"
+	"code-generator/db"
+	"github.com/flosch/pongo2"
+	"net/http"
+	"strings"
+)
+
 type Config struct {
 	Modules               []Module
 	MainPath              string
@@ -26,6 +34,30 @@ type JoinTable struct {
 	Description string //描述
 }
 
-func Gen(config *Config) {
+func Gen(config *Config, w http.ResponseWriter) {
+	template, _ := pongo2.FromFile("./tpl/index.tpl")
+	zipW := zip.NewWriter(w)
+	for _, module := range config.Modules {
+		columns := db.QueryColumns(module.TableName)
+		table := db.QueryTable(module.TableName)
+		rs, _ := template.Execute(map[string]interface{}{
+			"columns": columns,
+			"table":   table,
+		})
+		fW, _ := zipW.Create(getPath(table.ModuleName, table.FileName, "index.vue"))
+		fW.Write([]byte(rs))
+	}
+	defer func() {
+		zipW.Close()
+	}()
+}
 
+func getPath(moduleName, pageName, fileName string) string {
+	mainPath := "code"
+	return strings.Join([]string{
+		mainPath,
+		moduleName,
+		pageName,
+		fileName,
+	}, "/")
 }
