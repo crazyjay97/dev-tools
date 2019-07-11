@@ -12,6 +12,10 @@
 1. dep init
 2. dep ensure
 
+#### Run
+* go run main.go
+* [View](http://127.0.0.1:8888) `Default Port 8888`
+
 #### Build On MacOs
 * For Windows-64bit  
 ```
