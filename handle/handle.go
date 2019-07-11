@@ -5,6 +5,7 @@ import (
 	"code-generator/gen"
 	"code-generator/load"
 	"encoding/json"
+	"fmt"
 	"github.com/goinggo/mapstructure"
 	"net/http"
 	"net/url"
@@ -24,7 +25,8 @@ func init() {
 	http.HandleFunc("/generator/query/columns", queryColumnsHandle)
 	http.HandleFunc("/generator/gen", genHandle)
 	InitHttpProxy()
-
+	fmt.Println("Server Started Successfully")
+	fmt.Println("View On:", "http://127.0.0.1:"+strconv.Itoa(port))
 	if err := http.ListenAndServe("127.0.0.1:"+strconv.Itoa(port), nil); nil != err {
 		panic("Port Already Used")
 		panic(err)
