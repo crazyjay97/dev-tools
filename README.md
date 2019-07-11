@@ -1,4 +1,3 @@
-# code-generator
-code-generator-server
+1. dep init
+2. dep ensure
 
-dep init first
