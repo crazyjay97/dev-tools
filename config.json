@@ -19,6 +19,13 @@
       "root": "vue/",
       "filename": "add-or-update.vue",
       "needModule": true
+    },
+    {
+      "name": "mapper",
+      "root": "server/",
+      "needModule": true,
+      "filename": "Dao.xml",
+      "appendFileName": true
     }
   ]
 }

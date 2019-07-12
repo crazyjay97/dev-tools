@@ -20,10 +20,11 @@ type Db struct {
 	PrintLog    bool
 }
 type Tpl struct {
-	Name       string
-	Root       string
-	FileName   string
-	NeedModule bool
+	Name           string
+	Root           string
+	FileName       string
+	NeedModule     bool
+	AppendFileName bool
 }
 
 func init() {

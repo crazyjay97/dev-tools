@@ -52,11 +52,12 @@ func Gen(config *Config, w http.ResponseWriter) {
 			"addColumns":    addColumns,
 			"searchColumns": searchColumns,
 			"listColumns":   listColumns,
+			"joinTables":    module.JoinTables,
 		}
 		for _, tpl := range tpls {
 			template, _ := pongo2.FromFile("./tpl/" + tpl.Name + ".tpl")
 			rs, _ := template.Execute(data)
-			fW, _ := zipW.Create(getPath(tpl.Root, table.ModuleName, table.FileName, tpl.FileName, tpl.NeedModule))
+			fW, _ := zipW.Create(getPath(tpl.Root, table.ModuleName, table.FileName, tpl.FileName, tpl.NeedModule, tpl.AppendFileName))
 			fW.Write([]byte(rs))
 		}
 	}
@@ -74,7 +75,7 @@ func appendColumn(columns *[]*db.Column, joinTables *[]JoinTable) {
 				currentColumn = *column
 			}
 		}
-		*columns = append(*columns, &db.Column{ColumnName: table.TableName, FieldName: table.Alias, ColumnComment: table.Description, Extra: currentColumn.Extra, DataType: currentColumn.DataType})
+		*columns = append(*columns, &db.Column{ColumnName: table.SelfColumn, FieldName: table.Alias, ColumnComment: table.Description, Extra: currentColumn.Extra, DataType: currentColumn.DataType})
 	}
 }
 
@@ -90,10 +91,13 @@ func filterColumns(columns *[]*db.Column, addFields *[]string) *[]*db.Column {
 	return &newColumn
 }
 
-func getPath(root, moduleName, pageName, fileName string, needPageModule bool) string {
+func getPath(root, moduleName, pageName, fileName string, needPageModule bool, appendFileName bool) string {
 	mainPath := "code"
+	if appendFileName {
+		fileName = pageName + fileName
+	}
 	if !needPageModule {
-		fileName = ""
+		pageName = ""
 	}
 	return strings.Join([]string{
 		mainPath,
