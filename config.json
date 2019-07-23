@@ -21,6 +21,13 @@
       "needModule": true
     },
     {
+      "name": "store",
+      "root": "vue/",
+      "filename": ".js",
+      "needModule": false,
+      "appendFileName": true
+    },
+    {
       "name": "mapper",
       "root": "server/",
       "needModule": true,
