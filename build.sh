@@ -29,7 +29,8 @@ cp -r dist tpl types.ini config.json ${appPath}
 
 #zip
 echo "zip files"
-zip -r code-generator-app.zip ${appPath}
+#zip -r code-generator-app.zip ${appPath}
+tar czvf code-generator-app.tar.gz ${appPath}
 
 echo "package success"
 
