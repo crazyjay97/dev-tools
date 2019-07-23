@@ -51,7 +51,7 @@ func Gen(config *Config, w http.ResponseWriter) {
 			"addFields":     module.AddFields,
 			"addColumns":    addColumns,
 			"searchColumns": searchColumns,
-			"listColumns":   listColumns,
+			"listColumns":   listColumns, //查询列表,包含需要关联查的字段
 			"joinTables":    module.JoinTables,
 		}
 		for _, tpl := range tpls {
