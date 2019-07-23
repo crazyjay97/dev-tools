@@ -7,8 +7,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/goinggo/mapstructure"
+	"net"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -26,8 +28,20 @@ func init() {
 	http.HandleFunc("/generator/gen", genHandle)
 	InitHttpProxy()
 	fmt.Println("Server Started Successfully")
-	fmt.Println("View On:", "http://127.0.0.1:"+strconv.Itoa(port))
-	if err := http.ListenAndServe("127.0.0.1:"+strconv.Itoa(port), nil); nil != err {
+
+	addrList, err := net.InterfaceAddrs()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	for _, address := range addrList {
+		if host, ok := address.(*net.IPNet); ok && !host.IP.IsLoopback() {
+			if host.IP.To4() != nil {
+				fmt.Println("View On:", "http://"+host.IP.String()+":"+strconv.Itoa(port))
+			}
+		}
+	}
+	if err := http.ListenAndServe(":"+strconv.Itoa(port), nil); nil != err {
 		panic("Port Already Used")
 		panic(err)
 	}
