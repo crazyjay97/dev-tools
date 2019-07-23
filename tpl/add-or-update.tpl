@@ -68,13 +68,13 @@
                 formData: {  {% for column in addColumns %}
                     {{ column.FieldName }}: '' ,{% endfor %}
                 },
-                dataRule: {
-                    roleName: [{
+                dataRule: { {% for column in addColumns %}{% if column.ColumnKey != "PRI" %}
+                    {{ column.FieldName }}: [{
                         required: true,
                         message: this.$t('common.inputTip'),
                         trigger: 'blur'
                     }]
-                },
+                }, {% endif %}{% endfor %}
             }
         },
         methods: {
