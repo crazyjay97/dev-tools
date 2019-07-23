@@ -53,6 +53,8 @@ func Gen(config *Config, w http.ResponseWriter) {
 			"searchColumns": searchColumns,
 			"listColumns":   listColumns, //查询列表,包含需要关联查的字段
 			"joinTables":    module.JoinTables,
+			"moduleName":    table.ModuleName,
+			"fileName":      table.FileName,
 		}
 		for _, tpl := range tpls {
 			template, _ := pongo2.FromFile("./tpl/" + tpl.Name + ".tpl")

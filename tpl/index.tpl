@@ -86,7 +86,7 @@
                              :label="$t('common.operate')">
                 <template slot-scope="scope">
                     <el-button v-if="isAuth('sys:role:update')" type="warning" size="small"
-                               @click="addOrUpdateHandle(scope.row.roleId)">
+                               @click="addOrUpdateHandle(scope.row)">
                         {{"{"}}{ $t("common.modify") }{{"}"}}
                     </el-button>
                     </el-button>
@@ -115,10 +115,9 @@
     export default {
         data() {
             return {
-                dataForm: {             {% for column in searchColumns %}
+                dataForm: {  {% for column in searchColumns %}
                     {{ column.FieldName }}: '',{% endfor %}
                 },
-
             }
         },
         mixins: [baseMixin],
@@ -130,8 +129,8 @@
         },
         methods: {
             ...mapActions({
-                listAction: 'sys/role/list',
-                deleteAction: 'sys/role/delete'
+                listAction: '{{ moduleName }}/{{ fileName }}/list',
+                deleteAction: '{{ moduleName }}/{{ fileName }}/delete'
             }),
             //重置搜索框
             resetSearchBox() {

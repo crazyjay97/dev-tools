@@ -9,13 +9,19 @@
                         <h5>{{"{"}}{ $t("common.tip") }{{"}"}}<span>*</span>{{"{"}}{ $t("common.tippp") }{{"}"}}</h5>
                     </div>
                     <div class="i-box-conn">
-                        <el-row>{% for column in columns %} {% for field in addFields %} {% if field == column.ColumnName %}
+                        <el-row>{% for column in addColumns %}{% if column.ColumnKey == "PRI" %}
+                            <el-col :span="24" v-show="false">
+                                <el-form-item prop="{{ column.FieldName }}" label="{{ column.ColumnComment }}">
+                                    <el-input v-model="formData.{{ column.FieldName }}" placeholder="{{ column.ColumnComment }}"
+                                              clearable></el-input>
+                                </el-form-item>
+                            </el-col>{% else %}
                             <el-col :span="24">
                                 <el-form-item prop="{{ column.FieldName }}" label="{{ column.ColumnComment }}">
                                     <el-input v-model="formData.{{ column.FieldName }}" placeholder="{{ column.ColumnComment }}"
                                               clearable></el-input>
                                 </el-form-item>
-                            </el-col>{% endif %} {% endfor %} {% endfor %}
+                            </el-col>{% endif %}{% endfor %}
                         </el-row>
                     </div>
                 </div>
@@ -59,17 +65,8 @@
         data() {
             return {
                 isShow: false,
-                menuList: [],
-                tenants: [],
-                menuListTreeProps: {
-                    label: 'name',
-                    children: 'children'
-                },
-                formData: {
-                    id: 0,
-                    roleName: '',
-                    tenantId: '',
-                    remark: ''
+                formData: {  {% for column in addColumns %}
+                    {{ column.FieldName }}: '' ,{% endfor %}
                 },
                 dataRule: {
                     roleName: [{
@@ -82,39 +79,18 @@
         },
         methods: {
             ...mapActions({
-                infoAction: 'sys/role/info',
-                saveOrUpdateAction: 'sys/role/saveOrUpdate',
-                menuListAction: 'sys/menu/list',
+                saveOrUpdateAction: '{{ moduleName }}/{{ fileName }}/saveOrUpdate',
             }),
-            init(id) {
-                this.formData.id = id || 0
-                this.menuListAction(
-                ).then(data => {
-                    this.menuList = treeDataTranslate(data, 'menuId')
-                }).then(() => {
-                    this.visible = true
-                    this.$nextTick(() => {
-                        this.$refs['form'].resetFields()
-                        this.$refs.menuListTree.setCheckedKeys([])
-                    })
-                }).then(() => {
-                    if (this.formData.id) {
-                        this.infoAction(this.formData.id)
-                            .then(role => {
-                                this.formData.roleName = role.roleName
-                                this.formData.remark = role.remark
-                                this.$refs.menuListTree.setCheckedKeys(role.menuIdList)
-                            })
-                    }
-                })
+            init(row) { {% for column in addColumns %}
+                this.formData.{{ column.FieldName }} = row.{{ column.FieldName }} {% endfor %}
             },
             // 表单提交
             formDataSubmit() {
                 this.$refs['form'].validate((valid) => {
                     if (valid) {
-                        this.saveOrUpdateAction({
-                            roleId: this.formData.id || undefined,
-                            roleName: this.formData.roleName,
+                        this.saveOrUpdateAction({ {% for column in addColumns %}{% if column.ColumnKey == "PRI" %}
+                        {{ column.FieldName }}: this.formData.{{ column.FieldName }} || undefined,{% else %}
+                        {{ column.FieldName }}: this.formData.{{ column.FieldName }} ,{% endif %}{% endfor %}
                         }).then(() => {
                             this.$message({
                                 message: this.$t('common.successTip'),
