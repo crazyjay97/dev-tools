@@ -55,6 +55,8 @@ func Gen(config *Config, w http.ResponseWriter) {
 			"joinTables":    module.JoinTables,
 			"moduleName":    table.ModuleName,
 			"fileName":      table.FileName,
+			"className":     table.ClassName,
+			"packageName":   config.PackageName,
 		}
 		for _, tpl := range tpls {
 			template, _ := pongo2.FromFile("./tpl/" + tpl.Name + ".tpl")

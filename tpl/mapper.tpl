@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="${package}.${moduleName}.dao.${className}Dao">
+<mapper namespace="${{ packageName }}.{{ moduleName }}.dao.{{ className }}Dao">
 
-    <resultMap type="${package}.${moduleName}.entity.${className}Entity" id="baseMap">
+    <resultMap type="{{ packageName }}.{{ moduleName }}.entity.{{ className }}Entity" id="baseMap">
         {% for column in listColumns %}
         <result property="{{ column.FieldName }}" column="{{ column.ColumnName }}"/>
         {% endfor %}
@@ -14,11 +14,13 @@
         {% for column in columns %}
         t1.{{ column.ColumnName }}{% if column != forloop.Last %},{% endif %}
         {% endfor %}{% for column in joinTables %}{% if column.ColumnName != forloop.first.ColumnName %},{% endif %}
-        t{{ forloop.Counter+1 }}.{{ column.JoinColumn }}{% if column.ColumnName != forloop.Last.ColumnName %},{% endif %}
+        t{{ forloop.Counter+1 }}.{{ column.JoinColumn }}{% if column.ColumnName != forloop.Last.ColumnName %},{% endif
+        %}
         {% endfor %}
         FROM {{ table.TableName }} t1
         {% for joinTable in joinTables %}
-        LEFT JOIN {{ joinTable.TableName }} t{{ forloop.Counter+1 }} ON t1.{{ joinTable.SelfColumn }} = t{{ forloop.Counter+1 }}.{{ joinTable.JoinColumn  }}
+        LEFT JOIN {{ joinTable.TableName }} t{{ forloop.Counter+1 }} ON t1.{{ joinTable.SelfColumn }} =
+        t{{ forloop.Counter+1 }}.{{ joinTable.JoinColumn  }}
         {% endfor %}
         WHERE t1.DELETED = 0
         {% for column in columns %}

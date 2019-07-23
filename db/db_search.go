@@ -9,6 +9,7 @@ type Table struct {
 	TableName    string `json:"tableName"`
 	ModuleName   string
 	FileName     string
+	ClassName    string
 	Engine       string   `json:"engine"`
 	TableComment string   `json:"tableComment"`
 	CreateTime   UnixTime `json:"createTime"`
@@ -33,6 +34,8 @@ func (table *Table) Parse() {
 		}
 	}
 	table.FileName = strings.Join(splits, "")
+	table.ClassName = strings.ToUpper(string(table.FileName[0])) + table.FileName[1:]
+
 }
 
 type Column struct {
