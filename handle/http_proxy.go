@@ -1,17 +1,14 @@
 package handle
 
 import (
-	"github.com/Unknwon/goconfig"
+	"code-generator/load"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
 )
 
-var mime *goconfig.ConfigFile
-
 func InitHttpProxy() {
-	mime, _ = goconfig.LoadConfigFile("mime.ini")
 	loadPage("./dist", "")
 
 }
@@ -45,7 +42,7 @@ func loadHandle(path string, urlPath string) {
 	bytes, _ := ioutil.ReadFile(path)
 	http.HandleFunc(urlPath, func(writer http.ResponseWriter, request *http.Request) {
 		suffix := path[strings.LastIndex(path, ".")+1:]
-		fileType, err := mime.GetValue("mime", suffix)
+		fileType, err := load.Types.GetValue("mime", suffix)
 		if nil == err && suffix != "" {
 			writer.Header().Set("Content-Type", fileType)
 		} else {

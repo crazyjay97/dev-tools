@@ -1,6 +1,7 @@
 package db
 
 import (
+	"code-generator/load"
 	"strings"
 	"time"
 )
@@ -42,6 +43,7 @@ type Column struct {
 	ColumnName    string `json:"columnName"`
 	FieldName     string
 	DataType      string `json:"dataType"`
+	JavaType      string
 	ColumnComment string `json:"columnComment"`
 	ColumnKey     string `json:"columnKey"`
 	Extra         string `json:"extra"`
@@ -55,6 +57,11 @@ func (column *Column) Parse() {
 		splits[i] = strings.ToUpper(string(str[0])) + string(str[1:])
 	}
 	column.FieldName += strings.Join(splits, "")
+	javaType, err := load.Types.GetValue("javatype", "xxxxx")
+	column.JavaType = javaType
+	if err != nil {
+		column.JavaType = "Object"
+	}
 }
 
 type page struct {
