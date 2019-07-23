@@ -9,18 +9,17 @@
         {% endfor %}
     </resultMap>
 
+
     <select id="page" parameterType="object" resultMap="baseMap">
         SELECT
         {% for column in columns %}
         t1.{{ column.ColumnName }}{% if column != forloop.Last %},{% endif %}
         {% endfor %}{% for column in joinTables %}{% if column.ColumnName != forloop.first.ColumnName %},{% endif %}
-        t{{ forloop.Counter+1 }}.{{ column.JoinColumn }}{% if column.ColumnName != forloop.Last.ColumnName %},{% endif
-        %}
+        t{{ forloop.Counter+1 }}.{{ column.JoinColumn }}{% if column.ColumnName != forloop.Last.ColumnName %},{% endif %}
         {% endfor %}
         FROM {{ table.TableName }} t1
         {% for joinTable in joinTables %}
-        LEFT JOIN {{ joinTable.TableName }} t{{ forloop.Counter+1 }} ON t1.{{ joinTable.SelfColumn }} =
-        t{{ forloop.Counter+1 }}.{{ joinTable.JoinColumn  }}
+        LEFT JOIN {{ joinTable.TableName }} t{{ forloop.Counter+1 }} ON t1.{{ joinTable.SelfColumn }} = t{{ forloop.Counter+1 }}.{{ joinTable.JoinColumn  }}
         {% endfor %}
         WHERE t1.DELETED = 0
         {% for column in columns %}
@@ -28,8 +27,7 @@
             AND t1.{{ column.ColumnName }} = {{"#{"}}{{ column.FieldName }}{{"}"}}
         </if>
         {% endfor %}
-    </select>d
-
+    </select>
 
     <update id="deleteBatchIds" parameterType="java.util.List">
         UPDATE {{ table.TableName }} SET DELETED = 1
