@@ -40,13 +40,19 @@ func (table *Table) Parse() {
 }
 
 type Column struct {
-	ColumnName    string `json:"columnName"`
-	FieldName     string
-	DataType      string `json:"dataType"`
-	JavaType      string
-	ColumnComment string `json:"columnComment"`
-	ColumnKey     string `json:"columnKey"`
-	Extra         string `json:"extra"`
+	ColumnName      string `json:"columnName"`
+	FieldName       string
+	DataType        string `json:"dataType"`
+	JavaType        string
+	ColumnComment   string `json:"columnComment"`
+	ColumnKey       string `json:"columnKey"`
+	Extra           string `json:"extra"`
+	NeedShow        bool   //是否需要展示
+	NeedAdd         bool   // 是否需要添加
+	NeedFilter      bool   // 是否需要过滤
+	ShowMode        int    // 展示方式
+	DictionaryLabel string // 数据字典key
+	DictionaryValue string // 数据字典value
 }
 
 func (column *Column) Parse() {

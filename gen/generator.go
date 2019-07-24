@@ -21,10 +21,22 @@ type Config struct {
 }
 
 type Module struct {
-	TableName    string      //表名
-	SearchFields []string    //查询字段
-	AddFields    []string    //新增字段
-	JoinTables   []JoinTable //关联表
+	TableName     string   //表名
+	SearchFields  []string //查询字段
+	AddFields     []string //新增字段
+	ColumnSetting []ColumnSetting
+	JoinTables    []JoinTable //关联表
+}
+
+type ColumnSetting struct {
+	Column          string //字段名
+	ColumnDesc      string //介绍
+	NeedShow        bool   //是否需要展示
+	NeedAdd         bool   // 是否需要添加
+	NeedFilter      bool   // 是否需要过滤
+	ShowMode        int    // 展示方式
+	DictionaryLabel string // 数据字典key
+	DictionaryValue string // 数据字典value
 }
 
 type JoinTable struct {
@@ -41,8 +53,7 @@ func Gen(config *Config, w http.ResponseWriter) {
 	for _, module := range config.Modules {
 		columns := db.QueryColumns(module.TableName)
 		table := db.QueryTable(module.TableName)
-		addColumns := filterColumns(columns, &module.AddFields)
-		searchColumns := filterColumns(columns, &module.SearchFields)
+		addColumns, searchColumns := filterColumns(columns, &module.ColumnSetting)
 		listColumns := (*columns)[0:]
 		appendColumn(&listColumns, &module.JoinTables)
 		data := map[string]interface{}{
@@ -83,16 +94,29 @@ func appendColumn(columns *[]*db.Column, joinTables *[]JoinTable) {
 	}
 }
 
-func filterColumns(columns *[]*db.Column, addFields *[]string) *[]*db.Column {
-	newColumn := make([]*db.Column, 0)
+func filterColumns(columns *[]*db.Column, columnSetting *[]ColumnSetting) (*[]*db.Column, *[]*db.Column) {
+	addColumns := make([]*db.Column, 0)
+	searchColumns := make([]*db.Column, 0)
 	for _, column := range *columns {
-		for _, field := range *addFields {
-			if field == column.ColumnName {
-				newColumn = append(newColumn, column)
+		for _, setting := range *columnSetting {
+			if setting.Column == column.ColumnName {
+				column.ColumnComment = setting.ColumnDesc
+				column.NeedShow = setting.NeedShow
+				column.NeedAdd = setting.NeedAdd
+				column.NeedFilter = setting.NeedFilter
+				column.ShowMode = setting.ShowMode
+				column.DictionaryLabel = setting.DictionaryLabel
+				column.DictionaryValue = setting.DictionaryValue
+				if setting.NeedAdd {
+					addColumns = append(addColumns, column)
+				}
+				if setting.NeedFilter {
+					searchColumns = append(searchColumns, column)
+				}
 			}
 		}
 	}
-	return &newColumn
+	return &addColumns, &searchColumns
 }
 
 func getPath(root, moduleName, pageName, fileName string, needPageModule bool, appendFileName bool) string {
