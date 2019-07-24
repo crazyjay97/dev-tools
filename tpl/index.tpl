@@ -79,9 +79,9 @@
         <el-table :data="dataList" border v-loading="dataListLoading" @selection-change="selectionChangeHandle"
                   style="width: 100%;">
             <el-table-column type="selection" header-align="center" align="center" width="40">
-            </el-table-column>{% for column in listColumns %}{% if column.ColumnKey != "PRI" %}
+            </el-table-column>{% for column in listColumns %}{% if column.ColumnKey != "PRI" %}{% if column.NeedShow %}
             <el-table-column prop="{{ column.FieldName }}" header-align="left" align="left" label="{{ column.ColumnComment }}">
-            </el-table-column>{% endif %}{% endfor %}
+            </el-table-column>{% endif %}{% endif %}{% endfor %}
             <el-table-column fixed="right" header-align="center" align="center" width="250"
                              :label="$t('common.operate')">
                 <template slot-scope="scope">
@@ -90,7 +90,7 @@
                         {{"{"}}{ $t("common.modify") }{{"}"}}
                     </el-button>
                     <el-button v-if="isAuth('sys:role:delete')" type="danger" size="small"
-                               @click="deleteHandle(scope.row.roleId,scope.row.roleName)">
+                               @click="deleteHandle(scope.row.id)">
                         {{"{"}}{ $t("common.delete") }{{"}"}}
                     </el-button>
                 </template>

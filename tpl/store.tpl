@@ -26,7 +26,7 @@ export default {
             return new Promise((resolve, reject) => {
                 deleteList(
                     ids, getters.namespace
-                ).then(() => {
+                ).then(({data}) => {
                     if (data && data.code === 200) {
                         resolve()
                     } else {
