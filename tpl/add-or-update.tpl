@@ -35,36 +35,13 @@
 </template>
 
 <script>
-    import {treeDataTranslate} from '@/utils'
-    import Modal from "@/components/modal/modal"
     import "@/assets/scss/ui.scss"
     import {mapActions} from 'vuex'
+    import addOrUpdate from '_cm/mixin/add-or-update'
 
     export default {
-        props: {
-            value: {
-                required: true,
-                type: Boolean
-            }
-        },
-        watch: {
-            value(val) {
-                this.isShow = val;
-            },
-            isShow(val) {
-                if (!val) {
-                    this.$refs.form.clearValidate();
-                    this.$refs.form.resetFields();
-                }
-                this.$emit("input", val);
-            }
-        },
-        components: {
-            Modal
-        },
         data() {
             return {
-                isShow: false,
                 formData: {  {% for column in addColumns %}
                     {{ column.FieldName }}: '' ,{% endfor %}
                 },
@@ -73,10 +50,11 @@
                         required: true,
                         message: this.$t('common.inputTip'),
                         trigger: 'blur'
-                    }]
-                }, {% endif %}{% endfor %}
+                    }],{% endif %}{% endfor %}
+                },
             }
         },
+        mixins: [addOrUpdate],
         methods: {
             ...mapActions({
                 saveOrUpdateAction: '{{ moduleName }}/{{ fileName }}/saveOrUpdate',

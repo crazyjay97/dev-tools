@@ -89,7 +89,6 @@
                                @click="addOrUpdateHandle(scope.row)">
                         {{"{"}}{ $t("common.modify") }{{"}"}}
                     </el-button>
-                    </el-button>
                     <el-button v-if="isAuth('sys:role:delete')" type="danger" size="small"
                                @click="deleteHandle(scope.row.roleId,scope.row.roleName)">
                         {{"{"}}{ $t("common.delete") }{{"}"}}
@@ -124,34 +123,17 @@
         components: {
             AddOrUpdate
         },
-        activated() {
-            this.getDataList()
-        },
         methods: {
             ...mapActions({
                 listAction: '{{ moduleName }}/{{ fileName }}/list',
                 deleteAction: '{{ moduleName }}/{{ fileName }}/delete'
             }),
-            //重置搜索框
-            resetSearchBox() {
-                this.$refs.search_from.resetFields()
-                this.getDataList()
-            },
             // 获取数据列表
             getDataList() {
-                this.dataListLoading = true
-                this.listAction({
+                this.queryDataList({
                     'page': this.pageIndex,
                     'limit': this.pageSize,{% for column in searchColumns %}
                     '{{ column.FieldName }}': this.dataForm.{{ column.FieldName }},{% endfor %}
-                }).then(({list, totalCount}) => {
-                    this.dataList = list
-                    this.totalPage = totalCount
-                    this.dataListLoading = false
-                }).catch(errMsg => {
-                    this.dataList = []
-                    this.totalPage = 0
-                    this.dataListLoading = false
                 })
             },
         }
