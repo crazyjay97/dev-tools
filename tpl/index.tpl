@@ -1,23 +1,23 @@
 <template>
     <div class="warp-container mod-role">
-        <el-form :inline="true" :model="dataForm" ref="search_from" @keyup.enter.native="getDataList()"
+        <el-form :inline="true" :model="formData" ref="search_from" @keyup.enter.native="getDataList()"
                  label-width="80px">
             <el-row>
                 <el-col :span="21">{% for column in searchColumns %}{% if forloop.Counter <= 3 %}
                     <el-form-item label="{{ column.ColumnComment }}">
-                        <el-input v-model="dataForm.{{ column.FieldName }}" :placeholder="{{ column.ColumnComment }}"
+                        <el-input v-model="formData.{{ column.FieldName }}" placeholder="{{ column.ColumnComment }}"
                                   clearable></el-input>
                     </el-form-item>{% endif %}{% endfor %}
                     <el-form-item>
                         <el-button @click="getDataList()" type="primary">
-                            <icon-svg name="search1"></icon-svg>
+                            <icon-svg name="search"></icon-svg>
                             {{"{"}}{ $t("common.search") }{{"}"}}
                         </el-button>
                     </el-form-item>
                     <el-form-item>
                         <el-button @click="resetSearchBox()" type="info">
                             <icon-svg name="reset"></icon-svg>
-                            {{"{"}}{ $t("common.reset") }}" }{{"}"}}
+                            {{"{"}}{ $t("common.reset") }{{"}"}}
                         </el-button>
                     </el-form-item>
                 </el-col>
@@ -34,7 +34,7 @@
                         <div v-show="expandSearch">
                             <el-row>{% for column in searchColumns %}{% if forloop.Counter > 3 %}
                                 <el-form-item label="{{ column.ColumnComment }}">
-                                    <el-input v-model="dataForm.{{ column.FieldName }}" :placeholder="{{ column.ColumnComment }}"
+                                    <el-input v-model="formData.{{ column.FieldName }}" :placeholder="{{ column.ColumnComment }}"
                                               clearable></el-input>
                                 </el-form-item>{% endif %}{% endfor %}
                             </el-row>
@@ -52,7 +52,7 @@
                             <span class="selectOpBox">{{"{"}}{ $t("common.row") }{{"}"}}</span>
                         </div>
                         <span style="margin-left: 30px">
-                            <el-button v-if="isAuth('sys:role:delete')"
+                            <el-button v-if="isAuth('{{ moduleName }}:{{ fileName }}:delete')"
                                        :type="dataListSelections.length == 0 ?'primary' : 'danger'"
                                        plain :disabled="dataListSelections.length == 0" @click="deleteHandle()">
                               <icon-svg name="del"></icon-svg> {{"{"}}{ $t("common.delete") }{{"}"}}
@@ -61,13 +61,13 @@
                     </el-col>
                     <el-col :span="6" style="text-align:right;">
                         <el-form-item>
-                            <el-button v-if="isAuth('sys:role:save')" type="primary" @click="addOrUpdateHandle()">
+                            <el-button v-if="isAuth('{{ moduleName }}:{{ fileName }}:save')" type="primary" @click="addOrUpdateHandle()">
                                 <icon-svg name="add"></icon-svg>
                                 {{"{"}}{ $t("common.add") }{{"}"}}
                             </el-button>
                         </el-form-item>
                         <el-form-item>
-                            <el-button v-if="isAuth('sys:role:save')" type="info" @click="getDataList()" plain>
+                            <el-button v-if="isAuth('{{ moduleName }}:{{ fileName }}:save')" type="info" @click="getDataList()" plain>
                                 <icon-svg name="refresh"></icon-svg>
                                 {{"{"}}{ $t("common.refresh") }{{"}"}}
                             </el-button>
@@ -85,11 +85,11 @@
             <el-table-column fixed="right" header-align="center" align="center" width="250"
                              :label="$t('common.operate')">
                 <template slot-scope="scope">
-                    <el-button v-if="isAuth('sys:role:update')" type="warning" size="small"
+                    <el-button v-if="isAuth('{{ moduleName }}:{{ fileName }}:update')" type="warning" size="small"
                                @click="addOrUpdateHandle(scope.row)">
                         {{"{"}}{ $t("common.modify") }{{"}"}}
                     </el-button>
-                    <el-button v-if="isAuth('sys:role:delete')" type="danger" size="small"
+                    <el-button v-if="isAuth('{{ moduleName }}:{{ fileName }}:delete')" type="danger" size="small"
                                @click="deleteHandle(scope.row.id)">
                         {{"{"}}{ $t("common.delete") }{{"}"}}
                     </el-button>
@@ -114,7 +114,7 @@
     export default {
         data() {
             return {
-                dataForm: {  {% for column in searchColumns %}
+                formData: {  {% for column in searchColumns %}
                     {{ column.FieldName }}: '',{% endfor %}
                 },
             }
@@ -133,7 +133,7 @@
                 this.queryDataList({
                     'page': this.pageIndex,
                     'limit': this.pageSize,{% for column in searchColumns %}
-                    '{{ column.FieldName }}': this.dataForm.{{ column.FieldName }},{% endfor %}
+                    '{{ column.FieldName }}': this.formData.{{ column.FieldName }},{% endfor %}
                 })
             },
         }

@@ -40,11 +40,23 @@ type ColumnSetting struct {
 }
 
 type JoinTable struct {
-	TableName   string //表名
-	SelfColumn  string //关联字段
-	JoinColumn  string //被关联字段
-	Alias       string //别名
-	Description string //描述
+	TableName    string //表名
+	SelfColumn   string //关联字段
+	JoinColumn   string //被关联字段
+	SearchColumn string //别名
+	Alias        string //别名
+	FieldName    string //别名
+	Description  string //描述
+}
+
+func (joinTable *JoinTable) parse() {
+	splits := strings.Split(strings.ToLower(joinTable.Alias), "_")
+	joinTable.FieldName = splits[0]
+	splits = splits[1:]
+	for i, str := range splits {
+		splits[i] = strings.ToUpper(string(str[0])) + string(str[1:])
+	}
+	joinTable.FieldName += strings.Join(splits, "")
 }
 
 func Gen(config *Config, w http.ResponseWriter) {
@@ -83,6 +95,7 @@ func Gen(config *Config, w http.ResponseWriter) {
 
 func appendColumn(columns *[]*db.Column, joinTables *[]JoinTable) {
 	for _, table := range *joinTables {
+		table.parse()
 		realColumns := db.QueryColumns(table.TableName)
 		var currentColumn db.Column
 		for _, column := range *realColumns {
@@ -90,7 +103,7 @@ func appendColumn(columns *[]*db.Column, joinTables *[]JoinTable) {
 				currentColumn = *column
 			}
 		}
-		*columns = append(*columns, &db.Column{ColumnName: table.SelfColumn, FieldName: table.Alias, ColumnComment: table.Description, Extra: currentColumn.Extra, DataType: currentColumn.DataType})
+		*columns = append(*columns, &db.Column{NeedShow: true, ColumnName: table.Alias, FieldName: table.FieldName, ColumnComment: table.Description, Extra: currentColumn.Extra, DataType: currentColumn.DataType})
 	}
 }
 

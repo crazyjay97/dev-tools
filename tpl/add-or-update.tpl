@@ -1,6 +1,6 @@
 <template>
     <modal v-model="isShow" width="500px">
-        <el-form :model="formData" ref="form" label-width="140px" :rules="dataRule">
+        <el-form :model="formData" ref="form" label-width="140px" :rules="dataRule" label-position="left">
             <div>
                 <div class="i-box">
                     <div class="i-box-title">

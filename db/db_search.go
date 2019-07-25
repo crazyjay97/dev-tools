@@ -55,6 +55,23 @@ type Column struct {
 	DictionaryValue string // 数据字典value
 }
 
+type Dictionary struct {
+	Id         string
+	TenantId   string
+	CodeType   string
+	CodeValue  string
+	CodeText   string
+	CodeName   string
+	IsCommon   int
+	State      int
+	OrderNum   float32
+	CreateBy   string
+	CreateTime time.Time
+	UpdateBy   string
+	UpdateTime time.Time
+	Deleted    int
+}
+
 func (column *Column) Parse() {
 	splits := strings.Split(strings.ToLower(column.ColumnName), "_")
 	column.FieldName = splits[0]
@@ -63,7 +80,7 @@ func (column *Column) Parse() {
 		splits[i] = strings.ToUpper(string(str[0])) + string(str[1:])
 	}
 	column.FieldName += strings.Join(splits, "")
-	javaType, err := load.Types.GetValue("javatype", "xxxxx")
+	javaType, err := load.Types.GetValue("javatype", column.DataType)
 	column.JavaType = javaType
 	if err != nil {
 		column.JavaType = "Object"
