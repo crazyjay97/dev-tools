@@ -2,6 +2,8 @@ package db
 
 import (
 	"code-generator/load"
+	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	"strings"
 	"time"
 )
@@ -51,8 +53,10 @@ type Column struct {
 	NeedAdd         bool   // 是否需要添加
 	NeedFilter      bool   // 是否需要过滤
 	ShowMode        int    // 展示方式
-	DictionaryLabel string // 数据字典key
+	DictionaryKey   string // 数据字典key
+	DictionaryLabel string // 数据字典label
 	DictionaryValue string // 数据字典value
+	IsJoinColumn    bool   //是否关联字段
 }
 
 type Dictionary struct {
@@ -70,6 +74,15 @@ type Dictionary struct {
 	UpdateBy   string
 	UpdateTime time.Time
 	Deleted    int
+}
+
+func (Dictionary) TableName() string {
+	return "SYS_DICTIONARY"
+}
+
+func (dict *Dictionary) BeforeCreate(scope *gorm.Scope) error {
+	uuid := uuid.NewV4()
+	return scope.SetColumn("ID", uuid)
 }
 
 func (column *Column) Parse() {

@@ -7,6 +7,7 @@ import (
 	"github.com/flosch/pongo2"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type Config struct {
@@ -65,11 +66,12 @@ func Gen(config *Config, w http.ResponseWriter) {
 	for _, module := range config.Modules {
 		columns := db.QueryColumns(module.TableName)
 		table := db.QueryTable(module.TableName)
-		addColumns, searchColumns := filterColumns(columns, &module.ColumnSetting)
+		addColumns, searchColumns, pkColumn := filterColumns(columns, &module.ColumnSetting, config)
 		listColumns := (*columns)[0:]
 		appendColumn(&listColumns, &module.JoinTables)
 		data := map[string]interface{}{
 			"columns":       columns,
+			"pkColumn":      pkColumn,
 			"table":         table,
 			"addFields":     module.AddFields,
 			"addColumns":    addColumns,
@@ -80,6 +82,10 @@ func Gen(config *Config, w http.ResponseWriter) {
 			"fileName":      table.FileName,
 			"className":     table.ClassName,
 			"packageName":   config.PackageName,
+			"authorName":    config.AuthorName,
+			"emailAddress":  config.EmailAddress,
+			"mainPath":      config.MainPath,
+			"genTime":       time.Now().Format("2006-01-02 15:04:05"),
 		}
 		for _, tpl := range tpls {
 			template, _ := pongo2.FromFile("./tpl/" + tpl.Name + ".tpl")
@@ -94,6 +100,7 @@ func Gen(config *Config, w http.ResponseWriter) {
 }
 
 func appendColumn(columns *[]*db.Column, joinTables *[]JoinTable) {
+	newColumns := make([]*db.Column, 1)
 	for _, table := range *joinTables {
 		table.parse()
 		realColumns := db.QueryColumns(table.TableName)
@@ -103,13 +110,15 @@ func appendColumn(columns *[]*db.Column, joinTables *[]JoinTable) {
 				currentColumn = *column
 			}
 		}
-		*columns = append(*columns, &db.Column{NeedShow: true, ColumnName: table.Alias, FieldName: table.FieldName, ColumnComment: table.Description, Extra: currentColumn.Extra, DataType: currentColumn.DataType})
+		newColumns = append(newColumns, &db.Column{IsJoinColumn: true, NeedShow: true, ColumnName: table.Alias, FieldName: table.FieldName, ColumnComment: table.Description, Extra: currentColumn.Extra, DataType: currentColumn.DataType})
 	}
+	*columns = append(newColumns, *columns...)
 }
 
-func filterColumns(columns *[]*db.Column, columnSetting *[]ColumnSetting) (*[]*db.Column, *[]*db.Column) {
+func filterColumns(columns *[]*db.Column, columnSetting *[]ColumnSetting, config *Config) (*[]*db.Column, *[]*db.Column, *db.Column) {
 	addColumns := make([]*db.Column, 0)
 	searchColumns := make([]*db.Column, 0)
+	var pkColumn db.Column
 	for _, column := range *columns {
 		for _, setting := range *columnSetting {
 			if setting.Column == column.ColumnName {
@@ -120,6 +129,16 @@ func filterColumns(columns *[]*db.Column, columnSetting *[]ColumnSetting) (*[]*d
 				column.ShowMode = setting.ShowMode
 				column.DictionaryLabel = setting.DictionaryLabel
 				column.DictionaryValue = setting.DictionaryValue
+				if nil != &setting.DictionaryLabel {
+					dictionaryKeyAndLabel := strings.Split(setting.DictionaryLabel, ":")
+					column.DictionaryKey = dictionaryKeyAndLabel[0]
+					if nil != &setting.DictionaryValue {
+						genDictionary(dictionaryKeyAndLabel[0], dictionaryKeyAndLabel[1], setting.DictionaryValue, *config)
+					}
+				}
+				if column.ColumnKey == "PRI" {
+					pkColumn = *column
+				}
 				if setting.NeedAdd {
 					addColumns = append(addColumns, column)
 				}
@@ -129,7 +148,22 @@ func filterColumns(columns *[]*db.Column, columnSetting *[]ColumnSetting) (*[]*d
 			}
 		}
 	}
-	return &addColumns, &searchColumns
+	return &addColumns, &searchColumns, &pkColumn
+}
+
+func genDictionary(key, label, dictionaries string, config Config) {
+	dictList := strings.Split(dictionaries, ",")
+	for _, dict := range dictList {
+		valueAndDesc := strings.Split(dict, ":")
+		count := 0
+		db.DB.Model(&db.Dictionary{CodeType: key, CodeValue: valueAndDesc[0]}).Count(&count)
+		if count == 0 {
+			dictionary := db.Dictionary{CodeType: key, CodeName: label, CodeValue: valueAndDesc[0],
+				CodeText: valueAndDesc[1], CreateBy: config.AuthorName, CreateTime: time.Now()}
+			db.DB.Create(dictionary)
+		}
+	}
+
 }
 
 func getPath(root, moduleName, pageName, fileName string, needPageModule bool, appendFileName bool) string {

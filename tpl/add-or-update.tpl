@@ -5,7 +5,7 @@
                 <div class="i-box">
                     <div class="i-box-title">
                         <icon-svg name="line"></icon-svg>
-                        {{"{"}}{ $t('role.modal.title') }{{"}"}}
+                        编辑
                         <h5>{{"{"}}{ $t("common.tip") }{{"}"}}<span>*</span>{{"{"}}{ $t("common.tippp") }{{"}"}}</h5>
                     </div>
                     <div class="i-box-conn">
@@ -17,9 +17,14 @@
                                 </el-form-item>
                             </el-col>{% else %}
                             <el-col :span="24">
-                                <el-form-item prop="{{ column.FieldName }}" label="{{ column.ColumnComment }}">
+                                <el-form-item prop="{{ column.FieldName }}" label="{{ column.ColumnComment }}">{% if column.ShowMode == 0 %}
                                     <el-input v-model="formData.{{ column.FieldName }}" placeholder="{{ column.ColumnComment }}"
-                                              clearable></el-input>
+                                              clearable></el-input>{% elif column.ShowMode == 1 %}
+                                    <el-select v-model="formData.{{ column.FieldName }}" placeholder="{{ column.ColumnComment }}" clearable>
+                                        <el-option v-for="row in queryDictionary('{{column.DictionaryKey}}')" :key="row.codeValue" :value="row.codeValue"
+                                                   :label="row.codeText">
+                                        </el-option>
+                                    </el-select>{% endif %}
                                 </el-form-item>
                             </el-col>{% endif %}{% endfor %}
                         </el-row>
@@ -35,7 +40,6 @@
 </template>
 
 <script>
-    import "@/assets/scss/ui.scss"
     import {mapActions} from 'vuex'
     import addOrUpdate from '_cm/mixin/add-or-update'
 

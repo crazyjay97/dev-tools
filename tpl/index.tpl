@@ -3,10 +3,15 @@
         <el-form :inline="true" :model="formData" ref="search_from" @keyup.enter.native="getDataList()"
                  label-width="80px">
             <el-row>
-                <el-col :span="21">{% for column in searchColumns %}{% if forloop.Counter <= 3 %}
-                    <el-form-item label="{{ column.ColumnComment }}">
+                <el-col :span="21">{% for column in searchColumns %}{% if forloop.Counter <= 2 %}
+                    <el-form-item label="{{ column.ColumnComment }}">{% if column.ShowMode == 0 %}
                         <el-input v-model="formData.{{ column.FieldName }}" placeholder="{{ column.ColumnComment }}"
-                                  clearable></el-input>
+                                  clearable></el-input>{% elif column.ShowMode == 1 %}
+                        <el-select v-model="formData.{{ column.FieldName }}" placeholder="{{ column.ColumnComment }}" clearable>
+                            <el-option v-for="row in queryDictionary('{{column.DictionaryKey}}')" :key="row.codeValue" :value="row.codeValue"
+                                       :label="row.codeText">
+                            </el-option>
+                        </el-select>{% endif %}
                     </el-form-item>{% endif %}{% endfor %}
                     <el-form-item>
                         <el-button @click="getDataList()" type="primary">
@@ -32,23 +37,28 @@
                 <el-col :span="24">
                     <el-collapse-transition>
                         <div v-show="expandSearch">
-                            <el-row>{% for column in searchColumns %}{% if forloop.Counter > 3 %}
-                                <el-form-item label="{{ column.ColumnComment }}">
-                                    <el-input v-model="formData.{{ column.FieldName }}" :placeholder="{{ column.ColumnComment }}"
-                                              clearable></el-input>
+                            <el-row>{% for column in searchColumns %}{% if forloop.Counter > 2 %}
+                                <el-form-item label="{{ column.ColumnComment }}">{% if column.ShowMode == 0 %}
+                                    <el-input v-model="formData.{{ column.FieldName }}" placeholder="{{ column.ColumnComment }}"
+                                              clearable></el-input>{% elif column.ShowMode == 1 %}
+                                    <el-select v-model="formData.{{ column.FieldName }}" placeholder="{{ column.ColumnComment }}" clearable>
+                                        <el-option v-for="row in queryDictionary('{{column.DictionaryKey}}')" :key="row.codeValue" :value="row.codeValue"
+                                                   :label="row.codeText">
+                                        </el-option>
+                                    </el-select>{% endif %}
                                 </el-form-item>{% endif %}{% endfor %}
                             </el-row>
                         </div>
                     </el-collapse-transition>
                 </el-col>
             </el-row>
-            <el-card :body-style="{height:'auto'}">
+            <el-card :body-style="{height:'auto'}" class="operate-wrap">
                 <el-row>
-                    <el-col :span="18">
+                    <el-col :span="16">
                         <div class="data_selected">
                             <icon-svg name="tip"></icon-svg>
                             <span class="selectOpBox">{{"{"}}{ $t("common.haveChosen") }{{"}"}}</span>
-                            <span class="selectOpBox_number">{{ dataListSelections.length }}</span>
+                            <span class="selectOpBox_number">{{"{"}}{ dataListSelections.length }{{"}"}}</span>
                             <span class="selectOpBox">{{"{"}}{ $t("common.row") }{{"}"}}</span>
                         </div>
                         <span style="margin-left: 30px">
@@ -59,7 +69,7 @@
                             </el-button>
                         </span>
                     </el-col>
-                    <el-col :span="6" style="text-align:right;">
+                    <el-col :span="8" style="text-align:right;" class="operate-wrap-button">
                         <el-form-item>
                             <el-button v-if="isAuth('{{ moduleName }}:{{ fileName }}:save')" type="primary" @click="addOrUpdateHandle()">
                                 <icon-svg name="add"></icon-svg>
@@ -67,7 +77,7 @@
                             </el-button>
                         </el-form-item>
                         <el-form-item>
-                            <el-button v-if="isAuth('{{ moduleName }}:{{ fileName }}:save')" type="info" @click="getDataList()" plain>
+                            <el-button  type="info" @click="getDataList()" plain>
                                 <icon-svg name="refresh"></icon-svg>
                                 {{"{"}}{ $t("common.refresh") }{{"}"}}
                             </el-button>
@@ -80,9 +90,9 @@
                   style="width: 100%;">
             <el-table-column type="selection" header-align="center" align="center" width="40">
             </el-table-column>{% for column in listColumns %}{% if column.ColumnKey != "PRI" %}{% if column.NeedShow %}
-            <el-table-column prop="{{ column.FieldName }}" header-align="left" align="left" label="{{ column.ColumnComment }}">
+            <el-table-column prop="{{ column.FieldName }}" header-align="left" align="left" label="{{ column.ColumnComment }}" width="100" show-overflow-tooltip>
             </el-table-column>{% endif %}{% endif %}{% endfor %}
-            <el-table-column fixed="right" header-align="center" align="center" width="250"
+            <el-table-column fixed="right" header-align="center" align="center" width="150"
                              :label="$t('common.operate')">
                 <template slot-scope="scope">
                     <el-button v-if="isAuth('{{ moduleName }}:{{ fileName }}:update')" type="warning" size="small"
@@ -107,7 +117,6 @@
 
 <script>
     import AddOrUpdate from './add-or-update'
-    import "@/assets/scss/ui.scss"
     import {mapActions} from 'vuex'
     import baseMixin from '_cm/mixin/base'
 
