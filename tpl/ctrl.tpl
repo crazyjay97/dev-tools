@@ -79,7 +79,7 @@ public class {{className}}Controller {
     @RequiresPermissions("{{moduleName}}:{{fileName}}:delete")
     public R delete(@RequestBody {{pkColumn.JavaType}}[] {{pkColumn.FieldName}}s){
         {{fileName}}Service.deleteBatchIds(Arrays.asList({{pkColumn.FieldName}}s));
-    return R.ok();
+        return R.ok();
     }
 
 }
