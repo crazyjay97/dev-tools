@@ -17,7 +17,7 @@
 * [View](http://127.0.0.1:8888) `Default Port 8888`
 
 #### Build On MacOs
-* For Windows-64bit  
+* For Windows-64bit
 ```
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o main.exe main.go
 ```
