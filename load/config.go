@@ -1,7 +1,9 @@
 package load
 
 import (
+	"code-generator/asset"
 	"encoding/json"
+	"flag"
 	"github.com/Unknwon/goconfig"
 	"io/ioutil"
 )
@@ -23,14 +25,28 @@ type Db struct {
 	PrintLog    bool
 }
 type Tpl struct {
-	Name           string
-	Root           string
-	FileName       string
-	NeedModule     bool
-	AppendFileName bool
+	Name            string
+	Root            string
+	FileName        string
+	NeedModule      bool
+	AppendFileName  bool
+	AppendClassName bool
+	CustomModule    string
 }
 
 func init() {
+	initDependency := flag.Bool("init", true, "init dependency")
+	flag.Parse()
+	if *initDependency {
+		files := []string{"dist", "tpl", "types.ini"}
+		bytes, e := ioutil.ReadFile("./config.json")
+		if nil != e || bytes == nil {
+			files = append(files, "config.json")
+		}
+		for _, file := range files {
+			asset.RestoreAssets("./", file)
+		}
+	}
 	Types, _ = goconfig.LoadConfigFile("types.ini")
 	data, _ := ioutil.ReadFile("./config.json")
 	err := json.Unmarshal(data, &Config)

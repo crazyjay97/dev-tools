@@ -10,14 +10,6 @@
   revision = "3dba17dd7b9ec8509b3621a73a30a4b333eb28da"
 
 [[projects]]
-  branch = "master"
-  digest = "1:d527344aab3b30bf460300762dc36813acb86f58a5403efb2bda5a459497450f"
-  name = "github.com/c4pt0r/ini"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "47e5250791e5019a296626fc03064cf2b4e39f65"
-
-[[projects]]
   digest = "1:434aab943cc1c082c9df36bd4b1f107d9ef4af930d2ce13d3f2eb008df9196f0"
   name = "github.com/flosch/pongo2"
   packages = ["."]
@@ -60,16 +52,24 @@
   revision = "f5c5f50e6090ae76a29240b61ae2a90dd810112e"
   version = "v1.0.0"
 
+[[projects]]
+  digest = "1:274f67cb6fed9588ea2521ecdac05a6d62a8c51c074c1fccc6a49a40ba80e925"
+  name = "github.com/satori/go.uuid"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
+  version = "v1.2.0"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
     "github.com/Unknwon/goconfig",
-    "github.com/c4pt0r/ini",
     "github.com/flosch/pongo2",
     "github.com/goinggo/mapstructure",
     "github.com/jinzhu/gorm",
     "github.com/jinzhu/gorm/dialects/mysql",
+    "github.com/satori/go.uuid",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

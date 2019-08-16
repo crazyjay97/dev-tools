@@ -90,7 +90,7 @@ func Gen(config *Config, w http.ResponseWriter) {
 		for _, tpl := range tpls {
 			template, _ := pongo2.FromFile("./tpl/" + tpl.Name + ".tpl")
 			rs, _ := template.Execute(data)
-			fW, _ := zipW.Create(getPath(tpl.Root, table.ModuleName, table.FileName, tpl.FileName, tpl.NeedModule, tpl.AppendFileName))
+			fW, _ := zipW.Create(getPath(tpl, table.ModuleName, table.FileName, table.ClassName))
 			fW.Write([]byte(rs))
 		}
 	}
@@ -100,7 +100,7 @@ func Gen(config *Config, w http.ResponseWriter) {
 }
 
 func appendColumn(columns *[]*db.Column, joinTables *[]JoinTable) {
-	newColumns := make([]*db.Column, 1)
+	newColumns := make([]*db.Column, 0)
 	for _, table := range *joinTables {
 		table.parse()
 		realColumns := db.QueryColumns(table.TableName)
@@ -129,11 +129,12 @@ func filterColumns(columns *[]*db.Column, columnSetting *[]ColumnSetting, config
 				column.ShowMode = setting.ShowMode
 				column.DictionaryLabel = setting.DictionaryLabel
 				column.DictionaryValue = setting.DictionaryValue
-				if nil != &setting.DictionaryLabel {
+				if "" != setting.DictionaryLabel {
 					dictionaryKeyAndLabel := strings.Split(setting.DictionaryLabel, ":")
 					column.DictionaryKey = dictionaryKeyAndLabel[0]
-					if nil != &setting.DictionaryValue {
-						genDictionary(dictionaryKeyAndLabel[0], dictionaryKeyAndLabel[1], setting.DictionaryValue, *config)
+					if "" != setting.DictionaryValue {
+						//todo
+						//genDictionary(dictionaryKeyAndLabel[0], dictionaryKeyAndLabel[1], setting.DictionaryValue, *config)
 					}
 				}
 				if column.ColumnKey == "PRI" {
@@ -156,7 +157,7 @@ func genDictionary(key, label, dictionaries string, config Config) {
 	for _, dict := range dictList {
 		valueAndDesc := strings.Split(dict, ":")
 		count := 0
-		db.DB.Model(&db.Dictionary{CodeType: key, CodeValue: valueAndDesc[0]}).Count(&count)
+		db.DB.Model(&db.Dictionary{}).Where(&db.Dictionary{CodeType: key, CodeValue: valueAndDesc[0]}).Count(&count)
 		if count == 0 {
 			dictionary := db.Dictionary{CodeType: key, CodeName: label, CodeValue: valueAndDesc[0],
 				CodeText: valueAndDesc[1], CreateBy: config.AuthorName, CreateTime: time.Now()}
@@ -166,19 +167,24 @@ func genDictionary(key, label, dictionaries string, config Config) {
 
 }
 
-func getPath(root, moduleName, pageName, fileName string, needPageModule bool, appendFileName bool) string {
+func getPath(tpl *load.Tpl, moduleName string, pageName string, className string) string {
 	mainPath := "code"
-	if appendFileName {
-		fileName = pageName + fileName
+	fileName := tpl.FileName
+	if tpl.AppendFileName {
+		fileName = pageName + tpl.FileName
 	}
-	if !needPageModule {
+	if tpl.AppendClassName {
+		fileName = className + tpl.FileName
+	}
+	if !tpl.NeedModule {
 		pageName = ""
 	}
 	return strings.Join([]string{
 		mainPath,
-		root,
+		tpl.Root,
 		moduleName,
 		pageName,
+		tpl.CustomModule,
 		fileName,
 	}, "/")
 }
