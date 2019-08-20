@@ -2,7 +2,7 @@
   "port": 9999,
   "db": {
     "dialect": "mysql",
-    "url": "root:zywl2018@tcp(192.168.1.82:3306)/toilet?charset=utf8&parseTime=True&loc=Local",
+    "url": "root:zywl2018@tcp(192.168.1.82:3306)/toilet_data?charset=utf8&parseTime=True&loc=Local",
     "maxIdleCons": 10,
     "maxOpenCon": 100,
     "printLog": true
