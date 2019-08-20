@@ -1,8 +1,12 @@
 package {{packageName}}.{{moduleName}}.entity;
-
+{% if hasJoinColumn  %}
+import com.baomidou.mybatisplus.annotations.TableField;{% endif %}
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;
+import java.io.Serializable;{% if hasBigDecimal  %}
+import java.math.BigDecimal;{% endif %}{% if hasDate  %}import java.util.Date;{% endif %}{% if hasTime  %}import java.sql.Time;{% endif %}
+
 
 
 /**

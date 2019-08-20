@@ -69,6 +69,8 @@ func Gen(config *Config, w http.ResponseWriter) {
 		addColumns, searchColumns, pkColumn := filterColumns(columns, &module.ColumnSetting, config)
 		listColumns := (*columns)[0:]
 		appendColumn(&listColumns, &module.JoinTables)
+		hasBigDecimal, hasDate, hasTime := searchSpecialType(&listColumns)
+		hasJoinColumn := len(module.JoinTables) > 0
 		data := map[string]interface{}{
 			"columns":       columns,
 			"pkColumn":      pkColumn,
@@ -86,6 +88,10 @@ func Gen(config *Config, w http.ResponseWriter) {
 			"emailAddress":  config.EmailAddress,
 			"mainPath":      config.MainPath,
 			"genTime":       time.Now().Format("2006-01-02 15:04:05"),
+			"hasBigDecimal": hasBigDecimal,
+			"hasDate":       hasDate,
+			"hasTime":       hasTime,
+			"hasJoinColumn": hasJoinColumn,
 		}
 		for _, tpl := range tpls {
 			template, _ := pongo2.FromFile("./tpl/" + tpl.Name + ".tpl")
@@ -99,6 +105,23 @@ func Gen(config *Config, w http.ResponseWriter) {
 	}()
 }
 
+func searchSpecialType(columns *[]*db.Column) (bool, bool, bool) {
+	hasBigDecimal := false
+	hasDate := false
+	hasTime := false
+	for _, column := range *columns {
+		switch column.JavaType {
+		case "BigDecimal":
+			hasBigDecimal = true
+		case "Date":
+			hasDate = true
+		case "Time":
+			hasTime = true
+		}
+	}
+	return hasBigDecimal, hasDate, hasTime
+}
+
 func appendColumn(columns *[]*db.Column, joinTables *[]JoinTable) {
 	newColumns := make([]*db.Column, 0)
 	for _, table := range *joinTables {
@@ -110,7 +133,15 @@ func appendColumn(columns *[]*db.Column, joinTables *[]JoinTable) {
 				currentColumn = *column
 			}
 		}
-		newColumns = append(newColumns, &db.Column{IsJoinColumn: true, NeedShow: true, ColumnName: table.Alias, FieldName: table.FieldName, ColumnComment: table.Description, Extra: currentColumn.Extra, DataType: currentColumn.DataType})
+		newColumns = append(newColumns,
+			&db.Column{IsJoinColumn: true,
+				NeedShow:      true,
+				ColumnName:    table.Alias,
+				FieldName:     table.FieldName,
+				ColumnComment: table.Description,
+				Extra:         currentColumn.Extra,
+				DataType:      currentColumn.DataType,
+				JavaType:      currentColumn.JavaType})
 	}
 	*columns = append(newColumns, *columns...)
 }
