@@ -50,6 +50,7 @@ func init() {
 func restoreDependency() {
 	files := []string{"asset/dist", "asset/tpl", "configs/types.ini", "configs/config.json"}
 	for _, file := range files {
+		get
 		asset.RestoreAssets("./", file)
 	}
 }
