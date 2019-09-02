@@ -1,7 +1,7 @@
 package db
 
 import (
-	"code-generator/load"
+	"code-generator/internal/app/base"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 	"strings"
@@ -93,7 +93,7 @@ func (column *Column) Parse() {
 		splits[i] = strings.ToUpper(string(str[0])) + string(str[1:])
 	}
 	column.FieldName += strings.Join(splits, "")
-	javaType, err := load.Types.GetValue("javatype", column.DataType)
+	javaType, err := base.Types.GetValue("javatype", column.DataType)
 	column.JavaType = javaType
 	if err != nil {
 		column.JavaType = "Object"

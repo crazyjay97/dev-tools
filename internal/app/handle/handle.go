@@ -1,9 +1,9 @@
 package handle
 
 import (
-	"code-generator/db"
-	"code-generator/gen"
-	"code-generator/load"
+	"code-generator/internal/app/base"
+	"code-generator/internal/app/db"
+	"code-generator/internal/app/gen"
 	"encoding/json"
 	"fmt"
 	"github.com/goinggo/mapstructure"
@@ -17,8 +17,8 @@ import (
 
 func init() {
 	var port int
-	if 0 != load.Config.Port {
-		port = load.Config.Port
+	if 0 != base.Config.Port {
+		port = base.Config.Port
 	} else {
 		port = 8888
 	}

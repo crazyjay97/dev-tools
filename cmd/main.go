@@ -1,9 +1,8 @@
 package main
 
 import (
-	_ "code-generator/handle"
+	_ "code-generator/internal/app/handle"
 )
 
 func main() {
 }
-

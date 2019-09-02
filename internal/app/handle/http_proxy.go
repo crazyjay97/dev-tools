@@ -1,7 +1,8 @@
 package handle
 
 import (
-	"code-generator/load"
+	"code-generator/internal/app/base"
+	"code-generator/internal/common/utils"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -9,8 +10,7 @@ import (
 )
 
 func InitHttpProxy() {
-	loadPage("./dist", "")
-
+	loadPage("asset/dist", "")
 }
 
 func loadPage(path string, urlPath string) {
@@ -19,7 +19,7 @@ func loadPage(path string, urlPath string) {
 		path = "./"
 	}
 	//获取当前文件夹下所有文件包括文件夹
-	files, _ = ioutil.ReadDir(path)
+	files, _ = utils.GetDirInProject(path)
 	for _, f := range files {
 		if f.IsDir() { //如果当前是一个文件夹
 			loadPage(appendPath(path, f.Name()), appendUrlPath(urlPath, f.Name()))
@@ -42,7 +42,7 @@ func loadHandle(path string, urlPath string) {
 	bytes, _ := ioutil.ReadFile(path)
 	http.HandleFunc(urlPath, func(writer http.ResponseWriter, request *http.Request) {
 		suffix := path[strings.LastIndex(path, ".")+1:]
-		fileType, err := load.Types.GetValue("mime", suffix)
+		fileType, err := base.Types.GetValue("mime", suffix)
 		if nil == err && suffix != "" {
 			writer.Header().Set("Content-Type", fileType)
 		} else {

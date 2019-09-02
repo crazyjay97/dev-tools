@@ -2,8 +2,9 @@ package gen
 
 import (
 	"archive/zip"
-	"code-generator/db"
-	"code-generator/load"
+	"code-generator/internal/app/base"
+	"code-generator/internal/app/db"
+	"code-generator/internal/common/utils"
 	"github.com/flosch/pongo2"
 	"net/http"
 	"strings"
@@ -62,7 +63,7 @@ func (joinTable *JoinTable) parse() {
 
 func Gen(config *Config, w http.ResponseWriter) {
 	zipW := zip.NewWriter(w)
-	tpls := load.Config.Tpl
+	tpls := base.Config.Tpl
 	for _, module := range config.Modules {
 		columns := db.QueryColumns(module.TableName)
 		table := db.QueryTable(module.TableName)
@@ -94,7 +95,8 @@ func Gen(config *Config, w http.ResponseWriter) {
 			"hasJoinColumn": hasJoinColumn,
 		}
 		for _, tpl := range tpls {
-			template, _ := pongo2.FromFile("./tpl/" + tpl.Name + ".tpl")
+			bytes, _ := utils.GetFileInProject("asset/tpl/" + tpl.Name + ".tpl")
+			template, _ := pongo2.FromFile(string(bytes))
 			rs, _ := template.Execute(data)
 			fW, _ := zipW.Create(getPath(tpl, table.ModuleName, table.FileName, table.ClassName))
 			fW.Write([]byte(rs))
@@ -198,7 +200,7 @@ func genDictionary(key, label, dictionaries string, config Config) {
 
 }
 
-func getPath(tpl *load.Tpl, moduleName string, pageName string, className string) string {
+func getPath(tpl *base.Tpl, moduleName string, pageName string, className string) string {
 	mainPath := "code"
 	fileName := tpl.FileName
 	if tpl.AppendFileName {

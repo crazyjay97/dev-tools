@@ -10,7 +10,7 @@ if [[ ! -d "$appPath" ]]; then
 fi
 
 echo "asset process"
-go-bindata -o=./asset/asset.go -pkg=asset dist/... tpl/... types.ini config.json
+go-bindata -o=./asset/asset.go -pkg=asset asset/dist/... asset/tpl/... configs/types.ini configs/config.json
 
 #build for mac
 echo "build for mac"
