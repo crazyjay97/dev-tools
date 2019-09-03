@@ -4,7 +4,10 @@ import (
 	"code-generator/asset"
 	"code-generator/internal/common/utils"
 	"encoding/json"
+	"fmt"
 	"github.com/Unknwon/goconfig"
+	"os"
+	"path/filepath"
 )
 
 var Config JsonConfig
@@ -48,9 +51,14 @@ func init() {
 }
 
 func restoreDependency() {
-	files := []string{"asset/dist", "asset/tpl", "configs/types.ini", "configs/config.json"}
+	fmt.Println("Init Static File")
+	files := []string{"asset", "configs"}
+	AppPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		panic(err)
+	}
 	for _, file := range files {
-		get
-		asset.RestoreAssets("./", file)
+		err = asset.RestoreAssets(AppPath, file)
+		fmt.Println(err)
 	}
 }

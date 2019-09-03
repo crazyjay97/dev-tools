@@ -2,8 +2,13 @@
 
 projectPath=$(cd `dirname $0`/..; pwd)
 
+cd ${projectPath}
+
+echo Current Path `pwd`
+
 #app generate path
 appPath="${projectPath}/bin/"
+
 
 #create folder
     echo "create folder"
@@ -12,7 +17,7 @@ if [[ ! -d "$appPath" ]]; then
 fi
 
 echo "asset process"
-go-bindata -o=${projectPath}/asset/asset.go -pkg=asset ${projectPath}/asset/dist/... ${projectPath}/asset/tpl/... ${projectPath}/configs/types.ini ${projectPath}/configs/config.json
+go-bindata -o=./asset/asset.go -pkg=asset ./asset/... ./configs/...
 
 #build for mac
 echo "build for mac"
