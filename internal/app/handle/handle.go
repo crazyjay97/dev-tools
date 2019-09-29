@@ -29,25 +29,22 @@ func init() {
 	http.HandleFunc("/generator/gen", genHandle)
 	InitHttpProxy()
 	fmt.Println("Server Starting")
-
 	addrList, err := net.InterfaceAddrs()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-
-	if err := http.ListenAndServe(":"+strconv.Itoa(port), nil); nil != err {
-		fmt.Println("Port Already Used，Press 'Ctrl + C' To Exit")
-		for bufio.NewScanner(os.Stdin).Scan() {
-
-		}
-	}
-
 	for _, address := range addrList {
 		if host, ok := address.(*net.IPNet); ok && !host.IP.IsLoopback() {
 			if host.IP.To4() != nil {
 				fmt.Println("View On:", "http://"+host.IP.String()+":"+strconv.Itoa(port))
 			}
+		}
+	}
+	if err := http.ListenAndServe(":"+strconv.Itoa(port), nil); nil != err {
+		fmt.Println("Port Already Used，Press 'Ctrl + C' To Exit")
+		for bufio.NewScanner(os.Stdin).Scan() {
+
 		}
 	}
 }
