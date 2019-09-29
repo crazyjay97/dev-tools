@@ -9,7 +9,7 @@
             style="width: 300px"
             :clearable="true"
           />
-          <Button type="primary" icon="ios-search" @click="page=1pageData()">Search</Button>
+          <Button type="primary" icon="ios-search" @click="page=pageData()">Search</Button>
         </Col>
         <Col span="6">
           <Dropdown>
