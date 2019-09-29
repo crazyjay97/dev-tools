@@ -9,7 +9,7 @@
             style="width: 300px"
             :clearable="true"
           />
-          <Button type="primary" icon="ios-search" @click="page=1;pageData()">Search</Button>
+          <Button type="primary" icon="ios-search" @click="page=1pageData()">Search</Button>
         </Col>
         <Col span="6">
           <Dropdown>
@@ -33,7 +33,9 @@
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
-          <Button shape="circle" @click="gen">Generate</Button>
+          <Button shape="circle" @click="gen" :type="tablesLength > 0 ? 'warning' : ''" :disabled="tablesLength < 1">
+            Generate
+          </Button>
         </Col>
         <Col span="2">
           <Poptip title="Config" placement="left" @on-popper-hide="saveConfig">
@@ -69,7 +71,7 @@
         </Col>
       </Row>
     </Card>
-    <Table :columns="columns" height="600" :data="tbs" no-data-text="Can Not Find Table">
+    <Table :columns="columns" height="600" :data="tbs" no-data-text="Can Not Find Table" :row-class-name="rowClassName">
       <template slot-scope="{ row }" slot="operator">
         <Button shape="circle" icon="ios-more" @click="openConfig(row)">Add</Button>
       </template>
@@ -88,7 +90,7 @@
 
 <script>
   import MoreConfig from './more-config'
-  import {mapState, mapMutations} from 'vuex'
+  import {mapMutations, mapState} from 'vuex'
 
   export default {
     components: {
@@ -134,9 +136,6 @@
         ]
       };
     },
-    created() {
-      errTest = test
-    },
     computed: {
       ...mapState(["tables"]),
       tablesLength: {
@@ -159,6 +158,9 @@
       }
     },
     methods: {
+      rowClassName(row, index) {
+        return this.tables.filter(t => t.tableName == row.tableName).length > 0 ? 'row-chosen' : '';
+      },
       ...mapMutations(['updateTables']),
       removeTable(tableName) {
         this.updateTables(this.tables.filter(t => t.tableName != tableName))
@@ -178,7 +180,7 @@
         this.$refs.configModal.init(row)
       },
       gen() {
-        let tbs = [...this.tables]
+        let tbs = [...this.tables];
         tbs.forEach(t => t.joinTables = t.joinTables.filter(({tableName, selfColumn, joinColumn, alias, description}) =>
           tableName && selfColumn && joinColumn && alias && description).map(jt => {
             return {
@@ -190,7 +192,7 @@
               description: jt.description,
             }
           })
-        )
+        );
         let data = {
           mainPath: this.formData.mainPath,
           packageName: this.formData.pkg,
@@ -200,25 +202,25 @@
           removePrefix: this.formData.isRemovePrefix,
           autoSettingModuleName: this.formData.autoSettingModuleName,
           modules: tbs
-        }
+        };
         this.$ajax({
           url: "/generator/gen",
           method: "post",
           responseType: 'blob',
           data: data// JSON.stringify(data)
         }).then((res) => {
-          let blob = new Blob([res.data])
+          let blob = new Blob([res.data]);
           if (window.navigator.msSaveOrOpenBlob) {
             navigator.msSaveBlob(blob, "code.zip")
           } else {
-            let link = document.createElement("a")
-            let evt = document.createEvent("HTMLEvents")
-            evt.initEvent("click", false, false)
-            link.href = URL.createObjectURL(blob)
-            link.download = "code.zip"
-            link.style.display = "none"
-            document.body.appendChild(link)
-            link.click()
+            let link = document.createElement("a");
+            let evt = document.createEvent("HTMLEvents");
+            evt.initEvent("click", false, false);
+            link.href = URL.createObjectURL(blob);
+            link.download = "code.zip";
+            link.style.display = "none";
+            document.body.appendChild(link);
+            link.click();
             window.URL.revokeObjectURL(link.href)
           }
         })
@@ -233,7 +235,7 @@
             tableName: this.tableName
           }
         }).then(({data}) => {
-          this.total = data.total
+          this.total = data.total;
           this.tbs = data.list
         })
       }
@@ -243,5 +245,10 @@
 <style>
   .ivu-table-wrapper {
     overflow: auto;
+  }
+
+  .ivu-table .row-chosen td {
+    background-color: #2db7f5;
+    color: #fff;
   }
 </style>
