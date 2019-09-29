@@ -11,7 +11,7 @@ appPath="${projectPath}/bin/"
 
 
 #create folder
-    echo "create folder"
+echo "create folder"
 if [[ ! -d "$appPath" ]]; then
    mkdir bin
 fi
