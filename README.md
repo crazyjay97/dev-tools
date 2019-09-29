@@ -20,8 +20,8 @@ npm run build
 cd ..
 go-bindata -o=./asset/asset.go -pkg=asset ./asset/... ./configs/...
 ```
+###### If **go-bindata** Command Not Found，You Need Run ```go get -u github.com/jteeuwen/go-bindata/...```  
 
->If **go-bindata** Command Not Found，You Need Run ```go get -u github.com/jteeuwen/go-bindata/...```
 
 
 #### Build On MacOs
