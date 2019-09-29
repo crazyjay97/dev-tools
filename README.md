@@ -1,20 +1,28 @@
 #### Supported Databases
 * mysql
 
-#### Required File And Folder
-* mime.ini
-* config.json
-* dist
-* tpl
+#### Environment (_Ignore If Startup Without Problems_)
+* go v1.11
+* node v10.16.0
+* npm v6.9.0
 
-#### Install Dependence
-
-1. dep init
-2. dep ensure
 
 #### Run
 * go run main.go
-* [View](http://127.0.0.1:8888) `Default Port 8888`
+* [View](http://127.0.0.1:9999) `Default Port 9999`
+
+
+#### Before Build (_Static File To Binary_)
+```bash
+cd web/
+npm i #cnpm i
+npm run build
+cd ..
+go-bindata -o=./asset/asset.go -pkg=asset ./asset/... ./configs/...
+```
+
+>If **go-bindata** Command Not Found，You Need Run ```go get -u github.com/jteeuwen/go-bindata/...```
+
 
 #### Build On MacOs
 * For Windows-64bit
