@@ -6,9 +6,14 @@ cd ${projectPath}
 
 echo Current Path `pwd`
 
+#build vue
+cd web/
+npm i
+npm run build
+cd ..
+
 #app generate path
 appPath="${projectPath}/bin/"
-
 
 #create folder
 echo "create folder"
