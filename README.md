@@ -1,3 +1,4 @@
+[中文](./README_ZH.md)
 #### Supported Databases
 * mysql
 
