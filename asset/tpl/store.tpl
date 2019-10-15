@@ -8,9 +8,9 @@ export default {
         namespace: () => '{{ moduleName }}/{{ fileName }}'
     },
     actions: {
-        list({getters}, { {% for column in searchColumns %}{{ column.FieldName }},{% endfor %} }) {
+        list({getters}, {page,limit,{% for column in searchColumns %}{{ column.FieldName }},{% endfor %} }) {
             return new Promise((resolve, reject) => {
-                list({ {% for column in searchColumns %}
+                list({page,limit,{% for column in searchColumns %}
                     {{ column.FieldName }},{% endfor %}
                 }, getters.namespace).then(({data}) => {
                     if (data && data.code === 200) {

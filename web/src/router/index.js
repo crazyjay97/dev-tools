@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Main from '@/main/main'
+import Main from '@/view/main/main'
 import Generator from '@/view/generator'
 
-Vue.use(Router)
+Vue.use(Router);
 
 const router = new Router({
   routes: [{
@@ -16,7 +16,7 @@ const router = new Router({
       component: Generator
     }]
   }]
-})
+});
 
 
 router.beforeEach((to, from, next) => {
@@ -27,6 +27,6 @@ router.beforeEach((to, from, next) => {
   } else {
     next()
   }
-})
+});
 
 export default router
