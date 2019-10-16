@@ -23,12 +23,20 @@ public class {{ className }}Entity implements Serializable {
     {% for column in listColumns %}{% if !column.IsJoinColumn%}
 	/**
 	 * {{ column.ColumnComment }}
-	 */{% if column.ColumnKey == "PRI" %}
-    @TableId {% endif %}
-    private {{ column.JavaType }} {{ column.FieldName}};{% endif %}{% endfor %}{% for column in listColumns %}{% if column.IsJoinColumn %}
+	 */
+    {% if column.ColumnKey == "PRI" %}
+    @TableId
+    {% endif %}
+    private {{ column.JavaType }} {{ column.FieldName}};
+    {% endif %}
+    {% endfor %}
+    {% for column in listColumns %}
+    {% if column.IsJoinColumn %}
 	/**
 	 * {{ column.ColumnComment }}
 	 */
     @TableField(exist = false)
-    private {{ column.JavaType }} {{ column.FieldName}};{% endif %}{% endfor %}
+    private {{ column.JavaType }} {{ column.FieldName}};
+    {% endif %}
+    {% endfor %}
 }

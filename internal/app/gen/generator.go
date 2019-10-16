@@ -97,6 +97,8 @@ func Gen(config *Config, w http.ResponseWriter) {
 		for _, tpl := range tpls {
 			bytes, _ := utils.GetFileInProject("asset/tpl/" + tpl.Name + ".tpl")
 			template, _ := pongo2.FromString(string(bytes))
+			template.Options.LStripBlocks = true
+			template.Options.TrimBlocks = true
 			rs, _ := template.Execute(data)
 			fW, _ := zipW.Create(getPath(tpl, table.ModuleName, table.FileName, table.ClassName))
 			fW.Write([]byte(rs))

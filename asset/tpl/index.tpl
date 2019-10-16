@@ -3,16 +3,23 @@
         <el-form :inline="true" :model="formData" ref="search_from" @keyup.enter.native="getDataList()"
                  label-width="80px">
             <el-row>
-                <el-col :span="21">{% for column in searchColumns %}{% if forloop.Counter <= 2 %}
-                    <el-form-item label="{{ column.ColumnComment }}">{% if column.ShowMode == 0 %}
+                <el-col :span="21">
+                    {% for column in searchColumns %}
+                    {% if forloop.Counter <= 2 %}
+                    <el-form-item label="{{ column.ColumnComment }}">
+                        {% if column.ShowMode == 0 %}
                         <el-input v-model="formData.{{ column.FieldName }}" placeholder="{{ column.ColumnComment }}"
-                                  clearable></el-input>{% elif column.ShowMode == 1 %}
+                                  clearable></el-input>
+                        {% elif column.ShowMode == 1 %}
                         <el-select v-model="formData.{{ column.FieldName }}" placeholder="{{ column.ColumnComment }}" clearable>
                             <el-option v-for="row in queryDictionary('{{column.DictionaryKey}}')" :key="row.codeValue" :value="row.codeValue"
                                        :label="row.codeText">
                             </el-option>
-                        </el-select>{% endif %}
-                    </el-form-item>{% endif %}{% endfor %}
+                        </el-select>
+                        {% endif %}
+                    </el-form-item>
+                    {% endif %}
+                    {% endfor %}
                     <el-form-item>
                         <el-button @click="getDataList()" type="primary">
                             <icon-svg name="search"></icon-svg>
@@ -37,16 +44,22 @@
                 <el-col :span="24">
                     <el-collapse-transition>
                         <div v-show="expandSearch">
-                            <el-row>{% for column in searchColumns %}{% if forloop.Counter > 2 %}
+                            <el-row>
+                                {% for column in searchColumns %}
+                                {% if forloop.Counter > 2 %}
                                 <el-form-item label="{{ column.ColumnComment }}">{% if column.ShowMode == 0 %}
                                     <el-input v-model="formData.{{ column.FieldName }}" placeholder="{{ column.ColumnComment }}"
-                                              clearable></el-input>{% elif column.ShowMode == 1 %}
+                                              clearable></el-input>
+                                    {% elif column.ShowMode == 1 %}
                                     <el-select v-model="formData.{{ column.FieldName }}" placeholder="{{ column.ColumnComment }}" clearable>
                                         <el-option v-for="row in queryDictionary('{{column.DictionaryKey}}')" :key="row.codeValue" :value="row.codeValue"
                                                    :label="row.codeText">
                                         </el-option>
-                                    </el-select>{% endif %}
-                                </el-form-item>{% endif %}{% endfor %}
+                                    </el-select>
+                                    {% endif %}
+                                </el-form-item>
+                                {% endif %}
+                                {% endfor %}
                             </el-row>
                         </div>
                     </el-collapse-transition>
@@ -89,9 +102,15 @@
         <el-table :data="dataList" border v-loading="dataListLoading" @selection-change="selectionChangeHandle"
                   style="width: 100%;">
             <el-table-column type="selection" header-align="center" align="center" width="40">
-            </el-table-column>{% for column in listColumns %}{% if column.ColumnKey != "PRI" %}{% if column.NeedShow %}
+            </el-table-column>
+            {% for column in listColumns %}
+            {% if column.ColumnKey != "PRI" %}
+            {% if column.NeedShow %}
             <el-table-column prop="{{ column.FieldName }}" header-align="left" align="left" label="{{ column.ColumnComment }}" width="100" show-overflow-tooltip>
-            </el-table-column>{% endif %}{% endif %}{% endfor %}
+            </el-table-column>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
             <el-table-column fixed="right" header-align="center" align="center" width="150"
                              :label="$t('common.operate')">
                 <template slot-scope="scope">
@@ -123,8 +142,10 @@
     export default {
         data() {
             return {
-                formData: {  {% for column in searchColumns %}
-                    {{ column.FieldName }}: '',{% endfor %}
+                formData: {;
+                    {% for column in searchColumns %}
+                    {{ column.FieldName }}: '',
+                    {% endfor %}
                 },
             }
         },
@@ -141,8 +162,10 @@
             getDataList() {
                 this.queryDataList({
                     'page': this.pageIndex,
-                    'limit': this.pageSize,{% for column in searchColumns %}
-                    '{{ column.FieldName }}': this.formData.{{ column.FieldName }},{% endfor %}
+                    'limit': this.pageSize,;
+                {% for column in searchColumns %}
+                    '{{ column.FieldName }}';: this.formData.{{ column.FieldName }},
+                {% endfor %}
                 })
             },
         }

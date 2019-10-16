@@ -33,8 +33,7 @@
       "needModule": false,
       "filename": "Dao.xml",
       "appendFileName": false,
-      "appendClassName": true,
-      "customModule": "entity"
+      "appendClassName": true
     },
     {
       "name": "entity",
