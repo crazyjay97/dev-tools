@@ -96,7 +96,10 @@ func Gen(config *Config, w http.ResponseWriter) {
 		}
 		for _, tpl := range tpls {
 			bytes, _ := utils.GetFileInProject("asset/tpl/" + tpl.Name + ".tpl")
-			template, _ := pongo2.FromString(string(bytes))
+			template, err := pongo2.FromString(string(bytes))
+			if nil != err {
+				panic(err)
+			}
 			template.Options.LStripBlocks = true
 			template.Options.TrimBlocks = true
 			rs, _ := template.Execute(data)
