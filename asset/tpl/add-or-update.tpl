@@ -90,7 +90,7 @@
                         {% for column in addColumns %}
                         {% if column.ColumnKey == "PRI" %}
                         {{ column.FieldName }}: this.formData.{{ column.FieldName }} || undefined,
-                        {% else %}
+                        {%; else %}
                         {{ column.FieldName }}: this.formData.{{ column.FieldName }},
                         {% endif %}
                         {% endfor %}
