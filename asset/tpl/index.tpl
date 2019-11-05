@@ -142,7 +142,7 @@
     export default {
         data() {
             return {
-                formData: {;
+                formData: {
                     {% for column in searchColumns %}
                     {{ column.FieldName }}: '',
                     {% endfor %}
@@ -162,9 +162,9 @@
             getDataList() {
                 this.queryDataList({
                     'page': this.pageIndex,
-                    'limit': this.pageSize,;
+                    'limit': this.pageSize,
                 {% for column in searchColumns %}
-                    '{{ column.FieldName }}';: this.formData.{{ column.FieldName }},
+                    '{{ column.FieldName }}': this.formData.{{ column.FieldName }},
                 {% endfor %}
                 })
             },
