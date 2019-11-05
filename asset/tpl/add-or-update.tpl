@@ -59,7 +59,7 @@
                     {{ column.FieldName }}: '' ,
                     {% endfor %}
                 },
-                {
+                dataRule: {
                     {% for column in addColumns %}
                     {% if column.ColumnKey != "PRI" %}
                     {{ column.FieldName }}: [{
