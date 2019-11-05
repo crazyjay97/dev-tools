@@ -8,11 +8,9 @@ export default {
         namespace: () => '{{ moduleName }}/{{ fileName }}'
     },
     actions: {
-        list({getters}, {page,limit,{% for column in searchColumns %}{{ column.FieldName }},{% endfor %} }) {
+        list({getters}, {page,limit,{% for column in searchColumns %}{{ column.FieldName }},{% endfor %}}) {
             return new Promise((resolve, reject) => {
-                list({page,limit,{% for column in searchColumns %}
-                    {{ column.FieldName }},{% endfor %}
-                }, getters.namespace).then(({data}) => {
+                list({page,limit,{% for column in searchColumns %} {{ column.FieldName }},{% endfor %}}, getters.namespace).then(({data}) => {
                     if (data && data.code === 200) {
                         let {list, totalCount} = data.page
                         resolve({list, totalCount})
@@ -35,11 +33,9 @@ export default {
                 })
             })
         },
-        saveOrUpdate({getters}, { {% for column in addColumns %}{{ column.FieldName }},{% endfor %}  }) {
+        saveOrUpdate({getters}, { {% for column in addColumns %}{{ column.FieldName }},{% endfor %}}) {
             return new Promise((resolve, reject) => {
-                saveOrUpdate({ {% for column in addColumns %}
-                    {{ column.FieldName }},{% endfor %}
-                }, getters.namespace).then(({data}) => {
+                saveOrUpdate({ {% for column in addColumns %}{{ column.FieldName }},{% endfor %}}, getters.namespace).then(({data}) => {
                     if (data && data.code === 200) {
                         resolve()
                     } else {
