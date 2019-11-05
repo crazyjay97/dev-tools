@@ -20,8 +20,8 @@
         {% endif %}
         t{{ forloop.Counter+1 }}.{{ column.SearchColumn }} AS {{ column.Alias }}
         {% if !forloop.Last %},
-        {% endif %}
-        {% endfor %}
+        {% endif %} {% endfor %}
+
         FROM {{ table.TableName }} t1
         {% for joinTable in joinTables %}
         LEFT JOIN {{ joinTable.TableName }} t{{ forloop.Counter+1 }} ON t1.{{ joinTable.SelfColumn }} = t{{ forloop.Counter+1 }}.{{ joinTable.JoinColumn }}
