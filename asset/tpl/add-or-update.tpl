@@ -42,7 +42,8 @@
         </el-form>
         <div slot="footer">
             <el-button type="info" @click="isShow = false">{{"{"}}{ $t('common.cancel') }{{"}"}}</el-button>
-            <el-button type="success" @click="formDataSubmit()">{{"{"}}{ $t('common.complete') }{{"}"}}</el-button>
+            <el-button type="success" @click="formDataSubmit()" :loading="isLoading"
+                       :disabled="formData.id != '' && !canUpdate">{{"{"}}{ $t('common.complete') }{{"}"}}</el-button>
         </div>
     </modal>
 </template>
@@ -86,6 +87,7 @@
             formDataSubmit() {
                 this.$refs['form'].validate((valid) => {
                     if (valid) {
+                        this.isLoading = true
                         this.saveOrUpdateAction({
                         {% for column in addColumns %}
                         {% if column.ColumnKey == "PRI" %}
@@ -101,10 +103,14 @@
                                 duration: 1500,
                                 onClose: () => {
                                     this.isShow = false
+                                    this.isLoading = false
                                     this.$emit('refreshDataList')
                                 }
                             })
-                        }).catch(errMsg => this.$message.error(errMsg))
+                        }).catch(errMsg => {
+                            this.$message.error(errMsg)
+                            this.isLoading = false
+                        })
                     }
                 })
             }
