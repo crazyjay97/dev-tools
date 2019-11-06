@@ -6,7 +6,7 @@
                 <el-col :span="21">
                     {% for column in searchColumns %}
                     {% if forloop.Counter <= 2 %}
-                    <el-form-item label="{{ column.ColumnComment }}">
+                    <el-form-item label="{{ column.ColumnComment }}" prop="{{ column.FieldName }}">
                         {% if column.ShowMode == 0 %}
                         <el-input v-model="formData.{{ column.FieldName }}" placeholder="{{ column.ColumnComment }}"
                                   clearable></el-input>
@@ -47,7 +47,7 @@
                             <el-row>
                                 {% for column in searchColumns %}
                                 {% if forloop.Counter > 2 %}
-                                <el-form-item label="{{ column.ColumnComment }}">{% if column.ShowMode == 0 %}
+                                <el-form-item label="{{ column.ColumnComment }}" prop="{{ column.FieldName }}">{% if column.ShowMode == 0 %}
                                     <el-input v-model="formData.{{ column.FieldName }}" placeholder="{{ column.ColumnComment }}"
                                               clearable></el-input>
                                     {% elif column.ShowMode == 1 %}
