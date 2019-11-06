@@ -173,6 +173,7 @@ func filterColumns(columns *[]*db.Column, columnSetting *[]ColumnSetting, config
 					if "" != setting.DictionaryValue {
 						//todo
 						//genDictionary(dictionaryKeyAndLabel[0], dictionaryKeyAndLabel[1], setting.DictionaryValue, *config)
+						//todo auto generate menus
 					}
 				}
 				if column.ColumnKey == "PRI" {

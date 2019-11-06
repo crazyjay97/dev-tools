@@ -2,7 +2,7 @@
   "port": 9999,
   "db": {
     "dialect": "mysql",
-    "url": "root:zywl2018@tcp(192.168.1.82:3306)/toilet_data?charset=utf8&parseTime=True&loc=Local",
+    "url":"root:Neusense2018@tcp(192.168.1.82:3306)/biodiversity-cloud?charset=utf8&parseTime=True&loc=Local",
     "maxIdleCons": 10,
     "maxOpenCon": 100,
     "printLog": true
@@ -32,6 +32,14 @@
       "root": "mapper/",
       "needModule": false,
       "filename": "Dao.xml",
+      "appendFileName": false,
+      "appendClassName": true
+    },
+    {
+      "name": "menu-sql",
+      "root": "menu-sql/",
+      "needModule": false,
+      "filename": "Menus.sql",
       "appendFileName": false,
       "appendClassName": true
     },
