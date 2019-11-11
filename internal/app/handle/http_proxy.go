@@ -3,7 +3,6 @@ package handle
 import (
 	"code-generator/internal/app/base"
 	"code-generator/internal/common/utils"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -39,7 +38,7 @@ func loadPage(path string, urlPath string) {
 
 //文件名和文件绑定
 func loadHandle(path string, urlPath string) {
-	bytes, _ := ioutil.ReadFile(path)
+	bytes, _ := utils.GetFileInProject(path)
 	http.HandleFunc(urlPath, func(writer http.ResponseWriter, request *http.Request) {
 		suffix := path[strings.LastIndex(path, ".")+1:]
 		fileType, err := base.Types.GetValue("mime", suffix)
