@@ -10,7 +10,7 @@
 
 
 #### Run
-* go run main.go
+* go run cmd/main.go
 * [View](http://127.0.0.1:9999) `Default Port 9999`
 
 
