@@ -33,8 +33,9 @@
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
-          <Button shape="circle" @click="gen" :type="tablesLength > 0 ? 'warning' : ''" :disabled="tablesLength < 1">
-            Generate
+          <Button shape="circle" @click="gen" :type="tablesLength > 0 ? 'warning' : 'default'"
+                  :disabled="tablesLength < 1">
+            Generate File
           </Button>
         </Col>
         <Col span="2">
@@ -73,7 +74,10 @@
     </Card>
     <Table :columns="columns" height="600" :data="tbs" no-data-text="Can Not Find Table" :row-class-name="rowClassName">
       <template slot-scope="{ row }" slot="operator">
-        <Button shape="circle" icon="ios-more" @click="openConfig(row)">Add</Button>
+        <Button shape="circle" icon="ios-more" @click="openConfig(row)">Config And Add</Button>
+        <Button :disabled="tables.filter(r => r.tableName == row.tableName).length == 0" shape="circle" icon="ios-more"
+                @click="openCodeView(row)">Generator Code
+        </Button>
       </template>
     </Table>
     <Page
@@ -85,29 +89,23 @@
       @on-page-size-change="pageSizeHandle"
     />
     <more-config ref="configModal"></more-config>
+    <code-view ref="codeView"></code-view>
   </div>
 </template>
 
 <script>
   import MoreConfig from './more-config'
   import {mapMutations, mapState} from 'vuex'
+  import CodeView from './code'
 
   export default {
     components: {
-      MoreConfig
+      MoreConfig,
+      CodeView
     },
     data() {
       return {
         tableName: "",
-        formData: {
-          mainPath: "com.zyiot.tet",
-          pkg: "com.zyiot.tet.modules",
-          author: "professor X",
-          email: "professorX@mail.com",
-          isRemovePrefix: true,
-          moduleName: "",
-          autoSettingModuleName: true
-        },
         page: 1,
         limit: 10,
         total: 0,
@@ -138,6 +136,14 @@
     },
     computed: {
       ...mapState(["tables"]),
+      formData: {
+        get() {
+          return this.$store.state.settings;
+        },
+        set(settings) {
+          this.$store.commit("updateSettings", settings)
+        }
+      },
       tablesLength: {
         get() {
           return this.tables.length
@@ -158,23 +164,26 @@
       }
     },
     methods: {
+      openCodeView(row) {
+        this.$refs.codeView.show(row)
+      },
       rowClassName(row, index) {
-        return this.tables.filter(t => t.tableName == row.tableName).length > 0 ? 'row-chosen' : '';
+        return this.tables.filter(t => t.tableName == row.tableName).length > 0 ? 'row-chosen' : ''
       },
       ...mapMutations(['updateTables']),
       removeTable(tableName) {
         this.updateTables(this.tables.filter(t => t.tableName != tableName))
       },
       pageSizeHandle(s) {
-        this.limit = s;
-        this.pageData();
+        this.limit = s
+        this.pageData()
       },
       pageHandle(p) {
-        this.page = p;
-        this.pageData();
+        this.page = p
+        this.pageData()
       },
       saveConfig() {
-        window.localStorage["config"] = JSON.stringify(this.formData);
+        window.localStorage["config"] = JSON.stringify(this.formData)
       },
       openConfig(row) {
         this.$refs.configModal.init(row)

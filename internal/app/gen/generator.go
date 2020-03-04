@@ -20,6 +20,7 @@ type Config struct {
 	AutoSettingModuleName bool
 	ModuleName            string
 	RemovePrefix          bool
+	TemplateName          string
 }
 
 type Module struct {
@@ -59,6 +60,54 @@ func (joinTable *JoinTable) parse() {
 		splits[i] = strings.ToUpper(string(str[0])) + string(str[1:])
 	}
 	joinTable.FieldName += strings.Join(splits, "")
+}
+
+func CodeGen(config *Config, w http.ResponseWriter) {
+	tpls := base.Config.Tpl
+	for _, module := range config.Modules {
+		columns := db.QueryColumns(module.TableName)
+		table := db.QueryTable(module.TableName)
+		addColumns, searchColumns, pkColumn := filterColumns(columns, &module.ColumnSetting, config)
+		listColumns := (*columns)[0:]
+		appendColumn(&listColumns, &module.JoinTables)
+		hasBigDecimal, hasDate, hasTime := searchSpecialType(&listColumns)
+		hasJoinColumn := len(module.JoinTables) > 0
+		data := map[string]interface{}{
+			"columns":       columns,
+			"pkColumn":      pkColumn,
+			"table":         table,
+			"addFields":     module.AddFields,
+			"addColumns":    addColumns,
+			"searchColumns": searchColumns,
+			"listColumns":   listColumns, //查询列表,包含需要关联查的字段
+			"joinTables":    module.JoinTables,
+			"moduleName":    table.ModuleName,
+			"fileName":      table.FileName,
+			"className":     table.ClassName,
+			"packageName":   config.PackageName,
+			"authorName":    config.AuthorName,
+			"emailAddress":  config.EmailAddress,
+			"mainPath":      config.MainPath,
+			"genTime":       time.Now().Format("2006-01-02 15:04:05"),
+			"hasBigDecimal": hasBigDecimal,
+			"hasDate":       hasDate,
+			"hasTime":       hasTime,
+			"hasJoinColumn": hasJoinColumn,
+		}
+		for _, tpl := range tpls {
+			if config.TemplateName == tpl.Name {
+				bytes, _ := utils.GetFileInProject("asset/tpl/" + tpl.Name + ".tpl")
+				template, err := pongo2.FromString(string(bytes))
+				if nil != err {
+					panic(err)
+				}
+				template.Options.LStripBlocks = true
+				template.Options.TrimBlocks = true
+				rs, _ := template.Execute(data)
+				w.Write([]byte(rs))
+			}
+		}
+	}
 }
 
 func Gen(config *Config, w http.ResponseWriter) {

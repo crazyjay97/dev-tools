@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+//理解错误的土鳖版本--试试水
 func InitHttpProxy() {
 	loadPage("asset/dist", "")
 }

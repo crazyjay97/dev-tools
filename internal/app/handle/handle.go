@@ -27,6 +27,8 @@ func init() {
 	http.HandleFunc("/generator/query/all", queryAllHandle)
 	http.HandleFunc("/generator/query/columns", queryColumnsHandle)
 	http.HandleFunc("/generator/gen", genHandle)
+	http.HandleFunc("/generator/query/code", genCodeHandle)
+	http.HandleFunc("/generator/query/tplNames", queryALlTplHandle)
 	InitHttpProxy()
 	fmt.Println("Server Starting")
 	addrList, err := net.InterfaceAddrs()
@@ -93,6 +95,22 @@ func genHandle(w http.ResponseWriter, r *http.Request) {
 	var config gen.Config
 	decoder.Decode(&config)
 	gen.Gen(&config, w)
+}
+
+func genCodeHandle(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var config gen.Config
+	decoder.Decode(&config)
+	gen.CodeGen(&config, w)
+}
+
+func queryALlTplHandle(w http.ResponseWriter, r *http.Request) {
+	var tplNames []string
+	for _, tpl := range base.Config.Tpl {
+		tplNames = append(tplNames, (*tpl).Name)
+	}
+	res, _ := json.Marshal(tplNames)
+	w.Write(res)
 }
 
 func form2Map(form *url.Values) *map[string]string {

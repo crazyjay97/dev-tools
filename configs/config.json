@@ -2,7 +2,7 @@
   "port": 9999,
   "db": {
     "dialect": "mysql",
-    "url":"root:Neusense2018@tcp(192.168.1.82:3306)/biodiversity-cloud?charset=utf8&parseTime=True&loc=Local",
+    "url":"root:123456@tcp(192.168.20.213:3306)/ecology?charset=utf8&parseTime=True&loc=Local",
     "maxIdleCons": 10,
     "maxOpenCon": 100,
     "printLog": true
