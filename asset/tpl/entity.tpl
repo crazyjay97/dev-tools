@@ -1,42 +1,47 @@
-package {{packageName}}.{{moduleName}}.entity;
-{% if hasJoinColumn  %}
-import com.baomidou.mybatisplus.annotations.TableField;{% endif %}
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
-import lombok.Data;
-import java.io.Serializable;{% if hasBigDecimal  %}
+package {{packageName}}.entity.{{moduleName}};
+
+import com.zjzhd.entity.BaseEntity;
+import javax.persistence.*;
+{% if hasBigDecimal  %}
 import java.math.BigDecimal;{% endif %}{% if hasDate  %}import java.util.Date;{% endif %}{% if hasTime  %}import java.sql.Time;{% endif %}
 
-
-
 /**
- * {{ table.TableComment }}
+ * Description:{{ table.TableComment }}
+ * <p>
  *
  * @author {{ authorName }}
- * @email {{ emailAddress }}
  * @date {{ genTime }}
  */
-@TableName("{{ table.TableName }}")
-@Data
-public class {{ className }}Entity implements Serializable {
-	private static final long serialVersionUID = 1L;
+@Entity
+@Table(name = "{{ table.TableName }}")
+public class {{ className }} extends BaseEntity {
+
     {% for column in listColumns %}{% if !column.IsJoinColumn%}
-	/**
-	 * {{ column.ColumnComment }}
-	 */
+    /**
+     * {{ column.ColumnComment }}
+     */
     {% if column.ColumnKey == "PRI" %}
-    @TableId
+    @Id
+    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    {% else %}
+    @Column(name = "{{ column.ColumnName }}"{% if column.Length > 0 %}, length = {{ column.Length }}{% endif%})
     {% endif %}
     private {{ column.JavaType }} {{ column.FieldName}};
     {% endif %}
     {% endfor %}
-    {% for column in listColumns %}
-    {% if column.IsJoinColumn %}
-	/**
-	 * {{ column.ColumnComment }}
-	 */
-    @TableField(exist = false)
-    private {{ column.JavaType }} {{ column.FieldName}};
-    {% endif %}
-    {% endfor %}
+
+
+    {% for column in listColumns %}{% if !column.IsJoinColumn%}
+    public {{ column.JavaType }} get{{ column.Uppercase1th }}() {
+        return {{ column.FieldName}};
+    }
+
+    public void set{{ column.Uppercase1th}}({{ column.JavaType }} {{ column.FieldName}}) {
+        this.{{ column.FieldName}} = {{ column.FieldName}};
+    }
+    {% endif %}{% endfor %}
+
+
+
 }

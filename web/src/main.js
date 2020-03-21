@@ -7,10 +7,13 @@ import iView from 'iview';
 import 'iview/dist/styles/iview.css';
 import axios from 'axios'
 import store from './store'
+import VueHighlightJS from 'vue-highlightjs'
 
 Vue.prototype.$ajax = axios
 Vue.use(iView);
 
+
+Vue.use(VueHighlightJS)
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

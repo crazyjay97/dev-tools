@@ -29,8 +29,12 @@ func (t UnixTime) MarshalJSON() ([]byte, error) {
 func (table *Table) Parse() {
 	table.TableName = strings.ToLower(table.TableName)
 	splits := strings.Split(table.TableName, "_")
-	table.ModuleName = splits[0]
-	splits = splits[1:]
+	if len(splits) == 1 {
+		table.ModuleName = ""
+	} else {
+		splits = splits[1:]
+		table.ModuleName = splits[0]
+	}
 	for i, str := range splits {
 		if i != 0 {
 			splits[i] = strings.ToUpper(string(str[0])) + string(str[1:])
@@ -38,13 +42,14 @@ func (table *Table) Parse() {
 	}
 	table.FileName = strings.Join(splits, "")
 	table.ClassName = strings.ToUpper(string(table.FileName[0])) + table.FileName[1:]
-
 }
 
 type Column struct {
 	ColumnName      string `json:"columnName"`
 	FieldName       string
+	Uppercase1th    string
 	DataType        string `json:"dataType"`
+	Length          string `json:"length"`
 	JavaType        string
 	ColumnComment   string `json:"columnComment"`
 	ColumnKey       string `json:"columnKey"`
@@ -93,6 +98,7 @@ func (column *Column) Parse() {
 		splits[i] = strings.ToUpper(string(str[0])) + string(str[1:])
 	}
 	column.FieldName += strings.Join(splits, "")
+	column.Uppercase1th = strings.ToUpper(string(column.FieldName[0])) + column.FieldName[1:]
 	javaType, err := base.Types.GetValue("javatype", column.DataType)
 	column.JavaType = javaType
 	if err != nil {
@@ -133,12 +139,12 @@ func QueryTable(tableName string) *Table {
 func QueryColumns(tableName string) *[]*Column {
 	columns := make([]*Column, 0)
 	rows, e := DB.Table("information_schema.columns").
-		Select("column_name ColumnName, data_type dataType, column_comment columnComment, column_key columnKey, extra").
+		Select("column_name ColumnName, data_type dataType, column_comment columnComment,character_maximum_length length, column_key columnKey, extra").
 		Where("table_name = ? and table_schema = (select database())", tableName).Order("ordinal_position").Rows()
 	if nil == e {
 		for rows.Next() {
 			column := new(Column)
-			rows.Scan(&column.ColumnName, &column.DataType, &column.ColumnComment, &column.ColumnKey, &column.Extra)
+			rows.Scan(&column.ColumnName, &column.DataType, &column.ColumnComment, &column.Length, &column.ColumnKey, &column.Extra)
 			column.Parse()
 			columns = append(columns, column)
 		}
