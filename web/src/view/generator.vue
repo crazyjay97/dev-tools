@@ -75,8 +75,13 @@
     <Table :columns="columns" height="600" :data="tbs" no-data-text="Can Not Find Table" :row-class-name="rowClassName">
       <template slot-scope="{ row }" slot="operator">
         <Button shape="circle" icon="ios-more" @click="openConfig(row)">Config And Add</Button>
-        <Button :disabled="tables.filter(r => r.tableName == row.tableName).length == 0" shape="circle" icon="ios-more"
+        <Button :disabled="tables.filter(r => r.tableName == row.tableName).length == 0" shape="circle"
                 @click="openCodeView(row)">Generator Code
+        </Button>
+        <Button class="btn-remove" v-show="!tables.filter(r => r.tableName == row.tableName).length == 0"
+                shape="circle"
+                icon="md-close-circle"
+                @click="removeCurrentRow(row)">
         </Button>
       </template>
     </Table>
@@ -188,6 +193,9 @@
       openConfig(row) {
         this.$refs.configModal.init(row)
       },
+      removeCurrentRow(row) {
+        this.removeTable(row.tableName)
+      },
       gen() {
         let tbs = [...this.tables];
         tbs.forEach(t => t.joinTables = t.joinTables.filter(({tableName, selfColumn, joinColumn, alias, description}) =>
@@ -259,5 +267,19 @@
   .ivu-table .row-chosen td {
     background-color: #2db7f5;
     color: #fff;
+  }
+
+  .btn-remove {
+    border: none!important;
+    background: #00000000!important;
+  }
+
+  .btn-remove .ivu-icon {
+    transition: all linear 0.3s;
+  }
+
+  .btn-remove .ivu-icon:hover {
+    color: #515a6e;
+    transform: scale(2.5) rotateZ(180deg);
   }
 </style>
