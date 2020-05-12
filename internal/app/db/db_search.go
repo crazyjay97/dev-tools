@@ -9,13 +9,13 @@ import (
 )
 
 type Table struct {
-	TableName    string `gorm:"column:tableName",json:"tableName"`
+	TableName    string `gorm:"column:tableName" json:"tableName"`
 	ModuleName   string
 	FileName     string
 	ClassName    string
-	Engine       string   `gorm:"column:engine",json:"engine"`
-	TableComment string   `gorm:"column:tableComment",json:"tableComment"`
-	CreateTime   UnixTime `gorm:"column:createTime",json:"createTime"`
+	Engine       string   `gorm:"column:engine" json:"engine"`
+	TableComment string   `gorm:"column:tableComment" json:"tableComment"`
+	CreateTime   UnixTime `gorm:"column:createTime" json:"createTime"`
 	LogicDel     bool
 }
 
@@ -46,15 +46,15 @@ func (table *Table) Parse() {
 }
 
 type Column struct {
-	ColumnName      string `gorm:"column:ColumnName",json:"columnName"`
+	ColumnName      string `gorm:"column:ColumnName" json:"columnName"`
 	FieldName       string
 	Uppercase1th    string
-	DataType        string `gorm:"column:dataType",json:"dataType"`
-	Length          string `gorm:"column:length",json:"length"`
+	DataType        string `gorm:"column:dataType" json:"dataType"`
+	Length          string `gorm:"column:length" json:"length"`
 	JavaType        string
 	ColumnComment   string `gorm:"column:columnComment"`
-	ColumnKey       string `gorm:"column:columnKey",json:"columnKey"`
-	Extra           string `gorm:"column:extra",json:"extra"`
+	ColumnKey       string `gorm:"column:columnKey" json:"columnKey"`
+	Extra           string `gorm:"column:extra" json:"extra"`
 	NeedShow        bool   //是否需要展示
 	NeedAdd         bool   // 是否需要添加
 	NeedFilter      bool   // 是否需要过滤
@@ -160,20 +160,7 @@ func QueryList(tableName string, index int, limit int) (*[]*Table, int) {
 		page := NewPage(index, limit)
 		db = db.Offset(page.offset).Limit(page.limit)
 	}
-	rows, e := db.Rows()
 	tables := make([]*Table, 0)
-	if nil == e {
-		for rows.Next() {
-			table := new(Table)
-			rows.Scan(&table.TableName, &table.Engine, &table.TableComment, &table.CreateTime)
-			tables = append(tables, table)
-		}
-	} else {
-		goto CloseRows
-		panic(e)
-	}
-	defer rows.Close()
-CloseRows:
-	rows.Close()
+	db.Find(&tables)
 	return &tables, count
 }
