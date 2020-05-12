@@ -1,8 +1,8 @@
 package {{packageName}}.{{moduleName}}.dao;
 
 import {{packageName}}.{{moduleName}}.domain.{{ className }}Domain;
-import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -22,6 +22,6 @@ public interface {{ className }}Dao extends BaseMapper<{{ className }}Domain> {
     void deleteBatchIds(List<String> ids);
 {% endif %}
 
-    List<{{ className }}Entity> page(Page<{{ className }}Entity> page,Map params);
+    List<{{ className }}Domain> page(Page<{{ className }}Domain> page,Map params);
 
 }

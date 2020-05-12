@@ -2,8 +2,9 @@ package {{packageName}}.{{moduleName}}.domain;
 
 {% if hasJoinColumn  %}
 import com.baomidou.mybatisplus.annotations.TableField;{% endif %}
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
+
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import java.io.Serializable;
 {% if hasBigDecimal  %}import java.math.BigDecimal;{% endif %}
