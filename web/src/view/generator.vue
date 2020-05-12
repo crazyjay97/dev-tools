@@ -280,6 +280,6 @@
 
   .btn-remove .ivu-icon:hover {
     color: #515a6e;
-    transform: scale(2.5) rotateZ(180deg);
+    transform: scale(1.5) rotateZ(180deg);
   }
 </style>

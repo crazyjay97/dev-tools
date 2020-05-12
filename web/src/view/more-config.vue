@@ -93,7 +93,7 @@
   </Modal>
 </template>
 <script>
-  import {mapState, mapMutations} from 'vuex'
+  import {mapMutations, mapState} from 'vuex'
 
   export default {
     data() {
@@ -303,9 +303,10 @@
       commitConfig() {
         this.updateTables([...this.tables.filter(t => t.tableName != this.tableName), {
           tableName: this.tableName,
-          joinTables: this.multipleTables,
+          joinTables: this.multipleTables.filter(({alias, description, joinColumn, searchColumn, selfColumn, tableName}) => alias && description && joinColumn && searchColumn && selfColumn && tableName),
           columnSetting: this.columnSetting
         }])
+        console.log(this.tables)
       },
     },
   }
