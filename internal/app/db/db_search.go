@@ -9,13 +9,14 @@ import (
 )
 
 type Table struct {
-	TableName    string `json:"tableName"`
+	TableName    string `gorm:"column:tableName",json:"tableName"`
 	ModuleName   string
 	FileName     string
 	ClassName    string
-	Engine       string   `json:"engine"`
-	TableComment string   `json:"tableComment"`
-	CreateTime   UnixTime `json:"createTime"`
+	Engine       string   `gorm:"column:engine",json:"engine"`
+	TableComment string   `gorm:"column:tableComment",json:"tableComment"`
+	CreateTime   UnixTime `gorm:"column:createTime",json:"createTime"`
+	LogicDel     bool
 }
 
 type UnixTime time.Time
@@ -32,8 +33,8 @@ func (table *Table) Parse() {
 	if len(splits) == 1 {
 		table.ModuleName = ""
 	} else {
-		splits = splits[1:]
 		table.ModuleName = splits[0]
+		splits = splits[1:]
 	}
 	for i, str := range splits {
 		if i != 0 {
@@ -45,15 +46,15 @@ func (table *Table) Parse() {
 }
 
 type Column struct {
-	ColumnName      string `json:"columnName"`
+	ColumnName      string `gorm:"column:ColumnName",json:"columnName"`
 	FieldName       string
 	Uppercase1th    string
-	DataType        string `json:"dataType"`
-	Length          string `json:"length"`
+	DataType        string `gorm:"column:dataType",json:"dataType"`
+	Length          string `gorm:"column:length",json:"length"`
 	JavaType        string
-	ColumnComment   string `json:"columnComment"`
-	ColumnKey       string `json:"columnKey"`
-	Extra           string `json:"extra"`
+	ColumnComment   string `gorm:"column:columnComment"`
+	ColumnKey       string `gorm:"column:columnKey",json:"columnKey"`
+	Extra           string `gorm:"column:extra",json:"extra"`
 	NeedShow        bool   //是否需要展示
 	NeedAdd         bool   // 是否需要添加
 	NeedFilter      bool   // 是否需要过滤
@@ -130,28 +131,19 @@ func QueryTable(tableName string) *Table {
 	table := new(Table)
 	DB.Table("information_schema.tables").
 		Select("table_name tableName, engine, table_comment tableComment, create_time createTime").
-		Where("table_schema = (select database()) and table_name = ?", tableName).
-		Row().Scan(&table.TableName, &table.Engine, &table.TableComment, &table.CreateTime)
+		Where("table_schema = (select database()) and table_name = ?", tableName).Find(table)
 	table.Parse()
 	return table
 }
 
 func QueryColumns(tableName string) *[]*Column {
 	columns := make([]*Column, 0)
-	rows, e := DB.Table("information_schema.columns").
+	DB.Table("information_schema.columns").
 		Select("column_name ColumnName, data_type dataType, column_comment columnComment,character_maximum_length length, column_key columnKey, extra").
-		Where("table_name = ? and table_schema = (select database())", tableName).Order("ordinal_position").Rows()
-	if nil == e {
-		for rows.Next() {
-			column := new(Column)
-			rows.Scan(&column.ColumnName, &column.DataType, &column.ColumnComment, &column.Length, &column.ColumnKey, &column.Extra)
-			column.Parse()
-			columns = append(columns, column)
-		}
-	} else {
-		panic(e)
+		Where("table_name = ? and table_schema = (select database())", tableName).Order("ordinal_position").Find(&columns)
+	for _, column := range columns {
+		column.Parse()
 	}
-	defer rows.Close()
 	return &columns
 }
 

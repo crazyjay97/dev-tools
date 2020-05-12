@@ -72,6 +72,12 @@ func CodeGen(config *Config, w http.ResponseWriter) {
 		appendColumn(&listColumns, &module.JoinTables)
 		hasBigDecimal, hasDate, hasTime := searchSpecialType(&listColumns)
 		hasJoinColumn := len(module.JoinTables) > 0
+
+		for _, column := range *columns {
+			if column.ColumnName == "deleted" {
+				table.LogicDel = true
+			}
+		}
 		data := map[string]interface{}{
 			"columns":       columns,
 			"pkColumn":      pkColumn,
@@ -121,6 +127,13 @@ func Gen(config *Config, w http.ResponseWriter) {
 		appendColumn(&listColumns, &module.JoinTables)
 		hasBigDecimal, hasDate, hasTime := searchSpecialType(&listColumns)
 		hasJoinColumn := len(module.JoinTables) > 0
+
+		for _, column := range *columns {
+			if column.ColumnName == "deleted" {
+				table.LogicDel = true
+			}
+		}
+
 		data := map[string]interface{}{
 			"columns":       columns,
 			"pkColumn":      pkColumn,
