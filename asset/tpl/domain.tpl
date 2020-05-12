@@ -1,4 +1,4 @@
-package {{packageName}}.{{moduleName}}.entity;
+package {{packageName}}.{{moduleName}}.domain;
 
 {% if hasJoinColumn  %}
 import com.baomidou.mybatisplus.annotations.TableField;{% endif %}
@@ -21,7 +21,7 @@ import java.io.Serializable;
  */
 @TableName("{{ table.TableName }}")
 @Data
-public class {{ className }}Entity implements Serializable {
+public class {{ className }}Domain implements Serializable {
 
     private static final long serialVersionUID = 1L;
     {% for column in listColumns %}{% if !column.IsJoinColumn%}

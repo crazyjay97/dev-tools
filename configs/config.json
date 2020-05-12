@@ -2,7 +2,7 @@
   "port": 9999,
   "db": {
     "dialect": "mysql",
-    "url":"root:123456@tcp(192.168.20.213:3306)/ecology?charset=utf8&parseTime=True&loc=Local",
+    "url": "root:123456@tcp(localhost:3306)/base-admin?charset=utf8&parseTime=True&loc=Local",
     "maxIdleCons": 10,
     "maxOpenCon": 100,
     "printLog": true
@@ -51,6 +51,15 @@
       "appendFileName": false,
       "appendClassName": true,
       "customModule": "entity"
+    },
+    {
+      "name": "domain",
+      "root": "java/",
+      "needModule": false,
+      "filename": "Domain.java",
+      "appendFileName": false,
+      "appendClassName": true,
+      "customModule": "domain"
     },
     {
       "name": "dao",
