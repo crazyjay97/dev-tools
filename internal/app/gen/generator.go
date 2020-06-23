@@ -222,7 +222,9 @@ func filterColumns(columns *[]*db.Column, columnSetting *[]ColumnSetting, config
 	for _, column := range *columns {
 		for _, setting := range *columnSetting {
 			if setting.Column == column.ColumnName {
-				column.ColumnComment = setting.ColumnDesc
+				if setting.ColumnDesc != "" {
+					column.ColumnComment = setting.ColumnDesc
+				}
 				column.NeedShow = setting.NeedShow
 				column.NeedAdd = setting.NeedAdd
 				column.NeedFilter = setting.NeedFilter

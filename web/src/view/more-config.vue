@@ -306,7 +306,6 @@
           joinTables: this.multipleTables.filter(({alias, description, joinColumn, searchColumn, selfColumn, tableName}) => alias && description && joinColumn && searchColumn && selfColumn && tableName),
           columnSetting: this.columnSetting
         }])
-        console.log(this.tables)
       },
     },
   }

@@ -52,7 +52,7 @@ type Column struct {
 	DataType        string `gorm:"column:dataType" json:"dataType"`
 	Length          string `gorm:"column:length" json:"length"`
 	JavaType        string
-	ColumnComment   string `gorm:"column:columnComment"`
+	ColumnComment   string `gorm:"column:columnComment" json:"columnComment"`
 	ColumnKey       string `gorm:"column:columnKey" json:"columnKey"`
 	Extra           string `gorm:"column:extra" json:"extra"`
 	NeedShow        bool   //是否需要展示

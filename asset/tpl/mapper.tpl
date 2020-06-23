@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="{{ packageName }}.{{ moduleName }}.dao.{{ className }}Domain">
+<mapper namespace="{{ packageName }}.dao.{{ className }}Dao">
 
     <resultMap type="{{ packageName }}.{{ moduleName }}.domain.{{ className }}Domain" id="baseMap">
         {% for column in listColumns %}
