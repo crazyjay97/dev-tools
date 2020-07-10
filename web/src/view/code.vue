@@ -52,8 +52,9 @@
       },
       queryCode(name) {
         this.isLoadingCode = true;
-        let tbs = [...this.tables];
-        tbs.filter(r => r.tableName == this.tableName).forEach(t => t.joinTables = t.joinTables.filter(({tableName, selfColumn, joinColumn, alias, description}) =>
+        let tbs = [...this.tables]
+        tbs = tbs.filter(r => r.tableName == this.table.tableName)
+        tbs.forEach(t => t.joinTables = t.joinTables.filter(({tableName, selfColumn, joinColumn, alias, description}) =>
           tableName && selfColumn && joinColumn && alias && description).map(jt => {
             return {
               tableName: jt.tableName,

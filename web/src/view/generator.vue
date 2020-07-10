@@ -270,8 +270,8 @@
   }
 
   .btn-remove {
-    border: none!important;
-    background: #00000000!important;
+    border: none !important;
+    background: #00000000 !important;
   }
 
   .btn-remove .ivu-icon {
